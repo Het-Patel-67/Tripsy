@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+body {
+    background-color: #fcfaf5;
+}
+/* Container LI Styles */
+.menu-item {
+    position: relative; /* Needed for absolute positioning of the underline */
+    /* This transition is for any background color change on the li itself, though we use a div for the line */
+    transition: all 0.5s ease-in-out;
+}
+
+/* Anchor Tag (Text) Styles */
+.menu-link {
+    display: block; /* Makes the whole area clickable */
+    font-weight: 600;
+    padding-bottom: 3px; /* py-3 */
+    transition: color 0.3s ease-in-out;
+    text-decoration: none; 
+    color: #374151;
+}
+
+/* Text color change on hover */
+.menu-item:hover .menu-link {
+    color: #F97316; /* A shade of orange for hover text color */
+    text-shadow: 0 0 8px rgba(59,130,246,0.5);
+}
+.menu-item:active .menu-link,
+.menu-link:active {
+  color: #F97316; /* A shade of orange for active (clicked) text color */
+}
+
+/* The Underline DIV Styles */
+.glow-underline {
+    position: absolute;
+    bottom: 0;
+    left: 50%; /* Start the line centered */
+    transform: translateX(-50%); /* Pull back by half its width to truly center it */
+    height: 3px; /* Adjust this value to control the maximum thickness */
+    width: 0; /* Initially hidden */
+    
+    /* The radial gradient background for the glowing/varying color effect */
+    background: radial-gradient(ellipse at center, #ff7e5f 0%, #feb47b 50%, #ff7e5f 100%);
+    
+    /* Smooth transition for the width expansion */
+    transition: width 0s ease-in-out;
+
+    /* CRITICAL: Creates the "slim ends, big center" curved shape */
+    clip-path: ellipse(50% 100% at 50% 50%);
+}
+
+/* Expand the underline width on parent LI hover */
+.menu-item:hover .glow-underline {
+    width: 100%; /* Expands to 70% of the LI's width */
+}

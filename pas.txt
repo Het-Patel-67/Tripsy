@@ -1,0 +1,5 @@
+{
+    "username": "Het Patel",
+    "password": "Het$Patel123",
+    "email": "het@gmail.com"
+}

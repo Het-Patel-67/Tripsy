@@ -1,0 +1,40 @@
+============> Trip  <===============
+
+(1) Homepage:-
+--Navbar
+	Webview:-
+	-Plan a trip now
+	-Best 1 day trips nears you
+	-Show my Trips
+	-Expense Manager
+	-Login/account
+	-Contact us
+
+	Mobile view:-
+	-->Dropdown list
+		-Plan a trip now
+		-Best 1 day trips nears you
+		-Show my Trips
+		-Expense Manager
+		-Login
+		 
+-about project 
+		 --> background img & text get started
+		 -->Plan a trip now
+	     --> cards of trending destinations
+	     --> Expense manager details
+	     --> Public reviews
+-Footer  --> About us, contact us, reviews
+
+(2) Trip planner:-
+	-> Plan a trip using user's Budget, days , destination (category)
+			-->Then generate result according to selected Queries (DB)
+			-->User will choose one destination in Gujarat
+			-->Then show transportations, hotels with budget , foods to try and itinerary
+	-> Show Recommandations (like selected category other destinations)
+
+(3) Expense Tracker:-
+	-> Don't want just hotel,food, transportation expense calculate but also provide recommandation for where to lower expenses. If user want to calculate how much money he have to give or take from other person during trip than it should also there will option for that. And also there are fields like user add Poonam restaurant bill 3000 and added it to food then same like give 50 rs to rikshaw added to transportation. 
+
+
+
