@@ -29,6 +29,3 @@ build/
 # Temporary files
 *.tmp
 .cache/
-
-/server/pre.txt
-/pas.txt
