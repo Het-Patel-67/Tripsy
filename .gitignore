@@ -30,5 +30,5 @@ build/
 *.tmp
 .cache/
 
-./server/pre.txt
-./pas.txt
+/server/pre.txt
+/pas.txt
