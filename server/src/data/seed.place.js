@@ -4,7 +4,7 @@ import Place from "../models/place.model.js";
 import { fetchHotels, fetchRestaurants, fetchAttractions } from "../services/apiServices.js";
 import transformPlaces from "../controllers/transformPlaces.controller.js"
 
-const cities = ["Ahmedabad"];
+const cities = ["Ahmedabad","Uttarakhand"];
 
 async function seedPlace() {
     try {
@@ -13,7 +13,7 @@ async function seedPlace() {
         })
         console.log("Connected to MongoDB");
         for (const city of cities) {
-            const cityDoc = await City.findOne({ name: city });
+            const cityDoc = await City.findOne({ $or: [{ name: city }, { state: city }] });
 
             if (!cityDoc) {
                 console.log(`❌ City not found: ${city}`);

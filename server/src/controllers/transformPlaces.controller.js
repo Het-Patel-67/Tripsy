@@ -1,14 +1,14 @@
 import { mapCategory, extractPrice } from "../utils/categoryMapper.js";
-import fetchWikiDescription from "../services/wikiService.js";
-import {generateDescriptionsBatch } from "../services/geminiService.js"
+import fetchPlaceImages from "../utils/placeImages.js";
+import { generateDescriptionsBatch } from "../services/geminiService.js"
 
 async function transformPlaces(results = [], cityDoc, fallbackCategory) {
   try {
 
 
-    const basePlaces = results.map((place) => {
+    const basePlaces = results.map(async (place) => {
       const category = mapCategory(place, fallbackCategory);
-      
+      const extraImages = await fetchPlaceImages(place.photos_link);
       return {
         name: place.title,
         category,
@@ -19,7 +19,7 @@ async function transformPlaces(results = [], cityDoc, fallbackCategory) {
         user_review: place.user_review || "",
         images: [
           place.thumbnail,
-          place.serpapi_thumbnail
+          ...extraImages
         ].filter(Boolean),
         price: extractPrice(place.price),
         amenities: place.amenities || [],
@@ -34,7 +34,7 @@ async function transformPlaces(results = [], cityDoc, fallbackCategory) {
         fetchedAt: new Date()
       }
     });
-   const touristPlaces = basePlaces.filter(
+    const touristPlaces = basePlaces.filter(
       p => p.category !== "hotel" && p.category !== "restaurant"
     );
 

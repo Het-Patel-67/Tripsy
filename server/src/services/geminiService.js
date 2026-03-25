@@ -1,62 +1,76 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import axios from "axios";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-// 🔹 Chunk helper (batching)
-function chunkArray(arr, size = 10) {
-    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-        arr.slice(i * size, i * size + size)
-    );
+// 🔹 Batch helper
+function chunkArray(arr, size = 3) {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, i * size + size)
+  );
 }
 
-// 🔹 Generate descriptions in batches
 export async function generateDescriptionsBatch(places = []) {
-    try {
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
-            generationConfig: {
-                maxOutputTokens: 150,
-                temperature: 0.7
-            }
-        });
+  try {
+    const batches = chunkArray(places, 3);
+    let finalResults = [];
 
-        const batches = chunkArray(places, 10);
-        let finalResults = [];
+    for (const batch of batches) {
 
-        for (const batch of batches) {
-            const prompt = `
-        Write a short 2-line tourist-friendly description for each place.
+      const prompt = `
+Write a short, engaging 2-line travel description for each place.
+Mention what the place is famous for, key highlights, and overall vibe.
 
-        Each description MUST include:
-        - what the place is famous for
-        - key highlight
+Return ONLY JSON:
+[
+ {"name":"place","description":"text"}
+]
 
-        Keep it concise and engaging.
+Places:
+${batch.map(p => p.name).join("\n")}
+`;
 
-        Return ONLY JSON:
-        [
-        { "name": "place name", "description": "text" }
-        ]
+      let parsed = [];
 
-        Places:
-        ${batch.map(p => `${p.name} (${p.cityName})`).join("\n")}
-        `;
+      try {
+        const response = await axios.post(
+  `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
+  {
+    contents: [
+      {
+        parts: [{ text: prompt }]
+      }
+    ]
+  }
+);
 
-            const result = await model.generateContent(prompt);
-            const text = result.response.text();
+        const text =
+          response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-            try {
-                const parsed = JSON.parse(text);
-                finalResults.push(...parsed);
-            } catch (err) {
-                console.error("❌ JSON parse failed:", text);
-            }
-        }
+        // 🔹 Clean JSON
+        const start = text.indexOf("[");
+        const end = text.lastIndexOf("]");
 
-        return finalResults;
+        const cleanText =
+          start !== -1 && end !== -1
+            ? text.substring(start, end + 1)
+            : text;
 
-    } catch (error) {
-        console.error("Gemini error:", error);
-        return [];
+        parsed = JSON.parse(cleanText);
+
+      } catch (err) {
+        console.error("❌ Gemini REST Error:", err.response?.data || err.message);
+
+        parsed = batch.map(p => ({
+          name: p.name,
+          description: "A popular tourist destination famous for its attractions."
+        }));
+      }
+
+      finalResults.push(...parsed);
     }
+
+    return finalResults;
+
+  } catch (error) {
+    console.error("Gemini error:", error);
+    return [];
+  }
 }
