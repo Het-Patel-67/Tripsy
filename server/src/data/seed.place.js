@@ -4,7 +4,7 @@ import Place from "../models/place.model.js";
 import { fetchHotels, fetchRestaurants, fetchAttractions } from "../services/apiServices.js";
 import transformPlaces from "../controllers/transformPlaces.controller.js"
 
-const cities = ["Ahmedabad","Uttarakhand"];
+const cities = ["Ahmedabad","Uttarakhand","Rajasthan"];
 
 async function seedPlace() {
     try {

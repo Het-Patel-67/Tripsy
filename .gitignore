@@ -29,3 +29,5 @@ build/
 # Temporary files
 *.tmp
 .cache/
+
+/server/src/services/geminiService.js
