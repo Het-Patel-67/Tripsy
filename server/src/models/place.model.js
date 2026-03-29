@@ -30,7 +30,7 @@ const placeSchema = new Schema({
         ]
     },
     types: {
-        type:[String]
+        type: [String]
     },
     recommendedDuration: {
         type: Number
@@ -76,12 +76,13 @@ const placeSchema = new Schema({
 placeSchema.index({ location: "2dsphere" });
 placeSchema.index({ category: 1 })
 placeSchema.index({ city: 1, category: 1, rating: -1 })
-
+placeSchema.index({ rating: -1, category: 1, location: "2dsphere" })
 placeSchema.index(
     { fetchedAt: 1 },
     { expireAfterSeconds: 2592000 }
 );
 const Place = mongoose.model('Place', placeSchema);
+
 
 export default Place
 
