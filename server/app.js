@@ -13,11 +13,13 @@ app.use(cookieParser());
 // Routes
 import router from './src/routes/user.routes.js';
 import destiRouter from './src/routes/destination.routes.js';
+import itineraryRouter from './src/routes/itinerary.routes.js';
+
 app.use("/api/users",router);
-app.use("/api/destination",destiRouter)
+app.use("/api/destination",destiRouter);
+app.use("/api/itinerary",itineraryRouter);
 
-
-app.use(express.static("public"))
+app.use(express.static("public"));
 
 
 export default app;
