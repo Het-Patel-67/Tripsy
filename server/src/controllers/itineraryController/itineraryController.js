@@ -1,7 +1,7 @@
 import Place from "../models/place.js";
 import City from "../models/city.js";
 import Itinerary from "../models/itinerary.js";
-import asyncHandler from "../utils/asyncHandler.js"
+import asyncHandler from "../../utils/asyncHandler.js"
 
 //  Haversine Distance Function
 function getDistance(coord1, coord2) {
@@ -35,7 +35,6 @@ function buildRoute(places, startLocation) {
 
     for (let i = 0; i < unvisited.length; i++) {
       const place = unvisited[i];
-
       const dist = getDistance(
         current,
         place.location.coordinates
@@ -65,7 +64,6 @@ function divideIntoDays(route, days, startDate) {
   for (let i = 0; i < days; i++) {
     const currentDate = new Date(startDate);
     currentDate.setDate(currentDate.getDate() + i);
-
     itinerary.push({
       day: i + 1,
       date: currentDate.toISOString().split("T")[0],
@@ -73,7 +71,6 @@ function divideIntoDays(route, days, startDate) {
     });
     index += MAX_PER_DAY;
   }
-
   return itinerary;
 }
 
@@ -99,9 +96,9 @@ export const generateItinerary = asyncHandler(async (req, res) => {
     city,
     days,
     preferences = [],
-    startDate
+    startDate,
+    
   } = req.body;
-
 
   if (!city || !days || !startDate) {
     return res.status(400).json({

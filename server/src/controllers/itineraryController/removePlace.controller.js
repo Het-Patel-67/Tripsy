@@ -1,5 +1,5 @@
-import Itinerary from "../models/itinerary.model.js";
-import {asyncHandler} from "../utils/asyncHandler.js";
+import Itinerary from "../../models/itinerary.model.js";
+import {asyncHandler} from "../../utils/asyncHandler.js";
 
 export const removePlaceFromItinerary = asyncHandler(async (req, res) => {
   const { itineraryId, day, placeId } = req.body;

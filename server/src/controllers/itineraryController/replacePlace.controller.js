@@ -1,6 +1,6 @@
-import { asyncHandler } from "../utils/asyncHandler";
-import Itinerary from "../models/itinerary.model.js";
-import Place from "../models/place.model.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import Itinerary from "../../models/itinerary.model.js";
+import Place from "../../models/place.model.js";
 
 export const replacePlaceInItinerary = asyncHandler(async (req, res) => {
     const { itineraryId, day, oldPlaceId, newPlaceId } = req.body;
