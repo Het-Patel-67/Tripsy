@@ -1,6 +1,24 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose from "mongoose";
 
-const expenseSchema = new Schema({
+const participantSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: false
+    },
+    name: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    share: {
+        type: Number,
+        required: true,
+        min: 0
+    }
+});
+
+const expenseSchema = new mongoose.Schema({
     tripId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Itinerary",
@@ -13,9 +31,25 @@ const expenseSchema = new Schema({
         ref: "User",
         required: true
     },
-    title: {
+
+    paidBy: {
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+        name: String
+    },
+
+    participants: [participantSchema],
+
+    splitType: {
         type: String,
-        required: true
+        enum: ["equal", "exact"],
+        default: "equal"
+    },
+
+    title: {
+        type: String
     },
     isDeleted: {
         type: Boolean,
@@ -28,11 +62,15 @@ const expenseSchema = new Schema({
         default: "other",
         index: true
     },
+    paymentMethod: {
+        type: String,
+        enum: ["cash", "card", "online"],
+        default: "cash"
+    },
     amount: { type: Number, required: true, min: 0 },
-    description: { type: String },
     date: { type: Date, default: Date.now, index: "true" },
     createdAt: { type: Date, default: Date.now }
-});
 
-const Expense = mongoose.model('Expense', expenseSchema);
-export default Expense;
+}, { timestamps: true });
+
+export default mongoose.model("Expense", expenseSchema);
