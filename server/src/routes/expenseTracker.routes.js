@@ -4,7 +4,7 @@ import { verifyJWT } from '../middlewares/auth.middleware.js';
 import removeExpense from '../controllers/expenseTracker/removeExpenses.js';
 import getExpenses from '../controllers/expenseTracker/getExpenses.js';
 import updateExpense from '../controllers/expenseTracker/updateExpenses.js';
-
+import getBalances from '../controllers/expenseTracker/balanceCalculation.js';
 const expenseTrackerRouter = Router();
 
 expenseTrackerRouter.post("/", verifyJWT, createExpense);

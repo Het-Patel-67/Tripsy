@@ -1,7 +1,7 @@
 import mongoose,{Schema} from "mongoose"
 const itinerarySchema = new Schema({
-  user: { type: ObjectId, ref: "User" },
-  city: { type: ObjectId, ref: "City" },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  city: { type: mongoose.Schema.Types.ObjectId, ref: "City" },
   days: Number,
   startDate: Date,
   plan: [
@@ -10,7 +10,7 @@ const itinerarySchema = new Schema({
       date: String,
       places: [
         {
-          placeId: { type: ObjectId, ref: "Place" },
+          placeId: { type: mongoose.Schema.Types.ObjectId, ref: "Place" },
           name: String,
           category: String,
           location: {

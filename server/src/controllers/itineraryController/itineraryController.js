@@ -1,7 +1,7 @@
-import Place from "../models/place.js";
-import City from "../models/city.js";
-import Itinerary from "../models/itinerary.js";
-import asyncHandler from "../../utils/asyncHandler.js"
+import Place from "../../models/place.model.js";
+import City from "../../models/city.model.js";
+import Itinerary from "../../models/itinerary.model.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 
 //  Haversine Distance Function
 function getDistance(coord1, coord2) {

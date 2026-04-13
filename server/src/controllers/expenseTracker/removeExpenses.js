@@ -1,7 +1,7 @@
-import { asyncHandler } from "../../utils/asyncHandler";
-import Expense from "../../models/expense.model";
-import { ApiError } from "../../utils/ApiError";
-import { ApiResponse } from "../../utils/ApiResponse";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import Expense from "../../models/expense.model.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { ApiResponse } from "../../utils/ApiResponse.js";
 
 const removeExpense = asyncHandler(async (req, res) => {
     const { id } = req.params;

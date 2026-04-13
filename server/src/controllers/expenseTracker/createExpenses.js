@@ -1,12 +1,8 @@
 import Expense from "../../models/expense.model.js";
 import { ApiError } from "../../utils/ApiError.js";
-import { asyncHandler } from "../../utils/asyncHandler";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
-import {
-  validateParticipants,
-  calculateEqualSplit,
-  validateExactSplit
-} from "../utils/expense.js";
+import { calculateEqualSplit, validateExactSplit, validateParticipants, getParticipantId } from "../../utils/expense.js";
 
 const createExpense = asyncHandler(async (req, res) => {
   
