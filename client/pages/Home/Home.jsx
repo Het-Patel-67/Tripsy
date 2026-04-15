@@ -1,43 +1,43 @@
 import React from 'react'
-import ItineraryCard from './ItineraryCard'
-import ItineraryTimeline from './ItineraryTimeline'
-import HotelPreview from './HotelPreview'
-import FoodPreview from './FoodPreview'
-import ExpenseChart from './ExpenseChart'
+import ItineraryCard from './components/ItineraryCard'
+import ItineraryTimeline from './components/ItineraryTimeline'
+import HotelPreview from './components/HotelPreview'
+import FoodPreview from './components/FoodPreview'
+import ExpenseChart from '../ExpenseTracker/ExpenseChart'
 
 function Home() {
   const destinations = [
     {
       name: "Paris, France",
-      image: "/paris.jpg",
+      image: "/assets/paris.jpg",
     },
     {
       name: "Tokyo, Japan",
-      image: "/tokyo.avif",
+      image: "/assets/tokyo.avif",
     },
     {
       name: "New York, USA",
-      image: "/newyork.jpg",
+      image: "/assets/newyork.jpg",
     },
     {
       name: "Sydney, Australia",
-      image: "/sydney.jpg",
+      image: "/assets/sydney.jpg",
     },
     {
       name: "Rome, Italy",
-      image: "/rome.jpg",
+      image: "/assets/rome.jpg",
     },
     {
       name: "Cape Town, SA",
-      image: "/capetown.webp",
+      image: "/assets/capetown.webp",
     },
     {
       name: "Rio de Janeiro,Brazil",
-      image: "/riodejaneiro.jpg",
+      image: "/assets/riodejaneiro.jpg",
     },
     {
       name: "Mumbai, India",
-      image: "/mumbai.jpg",
+      image: "/assets/mumbai.jpg",
     }
   ]
 
@@ -81,21 +81,21 @@ function Home() {
       title: "Explore the Wonders of Italy",
       duration: "7 Days",
       highlights: ["Rome", "Florence", "Venice", "Tuscany"],
-      image: "/italy_itinerary.jpg"
+      image: "/assets/italy_itinerary.jpg"
     },
     {
       id: 2,
       title: "Discover Japan's Rich Culture",
       duration: "10 Days",
       highlights: ["Tokyo", "Kyoto", "Osaka", "Hiroshima"],
-      image: "/japan_itinerary.jpg"
+      image: "/assets/japan_itinerary.jpg"
     },
     {
       id: 3,
       title: "Himalayan Adventure",
       duration: "12 Days",
       highlights: ["Kathmandu", "Pokhara", "Annapurna Base Camp", "Chitwan National Park"],
-      image: "/Himalayan_itinerary.webp"
+      image: "/assets/Himalayan_itinerary.webp"
     }
   ]
   const expenses = [
@@ -108,7 +108,7 @@ function Home() {
     <>
       <div className="relative h-[50vh] sm:h-[75vh] overflow-hidden ">
         <img
-          src="/Gemini_Generated_Image_oazelooazelooaze.png"
+          src="/assets/Gemini_Generated_Image_oazelooazelooaze.png"
           className="absolute inset-0 h-[50vh] w-full object-fill sm:h-[75vh]"
           alt=""
         />
@@ -143,7 +143,7 @@ function Home() {
         <div className="flex gap-6 overflow-x-auto [&::-webkit-scrollbar]:hidden pb-4">
           {destinations.map((place) => (
             <div
-              className=" group relative min-w-60 sm:min-w-75 h-70 sm:h-80 overflow-hidden shadow-md transition hover:shadow-md rounded-md" onClick={""} key={place.name}
+              className=" group relative min-w-60 sm:min-w-75 h-70 sm:h-80 overflow-hidden shadow-md transition hover:shadow-md rounded-md"  key={place.name}
             >
               <img
                 src={place.image}

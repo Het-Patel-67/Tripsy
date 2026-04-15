@@ -28,5 +28,4 @@ export const getNearbyPlaces = asyncHandler(async (req, res) => {
 
     res.json(places);
 
-  
 });

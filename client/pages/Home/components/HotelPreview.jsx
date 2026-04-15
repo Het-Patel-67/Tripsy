@@ -1,7 +1,7 @@
 import React from 'react'
 
 function HotelPreview() {
-    const hotels =[
+    const hotelsPreview=[
     {
       name: "Sea View Resort",
       image: "/hotel1.webp",
@@ -25,7 +25,7 @@ function HotelPreview() {
   </h4>
 
   <div className="space-y-4">
-    {hotels.map(hotel => (
+    {hotelsPreview.map(hotel => (
       <div className="flex items-center gap-3" key={hotel.name}>
         <img src={hotel.image} className=" h-20 w-20 rounded-md object-cover" />
         <div>
