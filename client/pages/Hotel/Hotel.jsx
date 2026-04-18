@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { getLocalFallbackImage } from "../../src/utils/getLocalFallbackImage.js";
 
 function Hotel() {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -14,13 +15,12 @@ function Hotel() {
         );
 
         const places = res.data.data.places;
-        console.log("Retrieve places: ", places);
-        const hotelPlaces = places.filter(
+
+        const hotelPlaces = Array.isArray(places) ? places.filter(
           (place) =>
             place.category?.toLowerCase().trim() === "hotel" || place.category?.toLowerCase().trim() === "resort"
-        );
-
-
+        ) : [];
+        console.log("Hotel images:", hotelPlaces);
         setHotels(hotelPlaces);
       } catch (error) {
         console.error("Error fetching places: ", error);
@@ -37,11 +37,22 @@ function Hotel() {
       {hotels.length === 0 && <p>No hotels found</p>}
 
       <div>
-        {hotels.map((hotel) => (
+        {hotels.map((hotel, index) => (
           <div key={hotel._id}>
             <img
-              src={hotel.image}
+              src={
+                hotel.image && hotel.image.trim() !== ""
+                  ? hotel.image
+                  : getLocalFallbackImage(hotel, index)
+              }
               alt={hotel.name}
+              onError={(e) => {
+                if (!e.target.dataset.fallbackApplied) {
+                  e.target.dataset.fallbackApplied = "true";
+                  e.target.src = getLocalFallbackImage(hotel, index);
+                }
+              }}
+            
               className="w-full max-w-100 h-62.5 object-cover"
             />
             <h2>{hotel.name}</h2>
