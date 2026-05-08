@@ -1,248 +1,355 @@
-import React,{useState} from 'react'
+import React, { useState } from "react";
+import {
+  generateItinerary,
+  getHotelRecommendations
+} from "../../src/services/apiService.js";
+
+import HotelSection from "./Hotel.jsx";
+import PreferencesSelect from "./components/PreferencesSelect.jsx";
 
 function Trip() {
-
-const categories = [
-  "Nature",
-  "Spiritual",
-  "Beach",
-  "Heritage",
-  "Adventure",
-  "1-Day Trips",
-  "Weekend Getaways",
-  "Fun Parks",
-];
-
-const destinations = [
-  {
-    id: 1,
-    name: "Dwarka",
-    category: "Spiritual",
-    cost: "₹2.5k/day",
-    image: "/dwarka.jpg",
-  },
-  {
-    id: 2,
-    name: "Girnar",
-    category: "Nature",
-    cost: "₹3k/day",
-    image: "/Girnar.jpeg",
-  },
-  {
-    id: 3,
-    name: "Somnath",
-    category: "Spiritual",
-    cost: "₹2k/day",
-    image: "/somnath.png",
-  },
-];
-
-  const [budget, setBudget] = useState(10000);
+  const [city, setCity] = useState("");
   const [days, setDays] = useState(3);
-  const [category, setCategory] = useState("Nature");
-  const [selectedDestination, setSelectedDestination] = useState(null);
+  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
+  const [itinerary, setItinerary] = useState(null);
+  const [itineraryId, setItineraryId] = useState(null);
+  const [hotels, setHotels] = useState([]);
+  const [loadingHotels, setLoadingHotels] = useState(false);
+  const [budget, setBudget] = useState("medium");
+  const [preferences, setPreferences] = useState([]);
+  const [style, setStyle] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+
+  const categories = [
+  "Tourist",
+  "Nature",
+  "Adventure",
+  "Historical",
+  "Spiritual",
+  "Culture",
+  "Wildlife",
+  "Beach",
+  "Mountain",
+  "Entertainment",
+  "Shopping"
+];
+
+  const getEndDate = (start, duration) => {
+    const [year, month, day] = start.split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+    const dayCount = Math.max(1, Number(duration) || 1);
+    date.setDate(date.getDate() + dayCount - 1);
+    return date.toISOString().slice(0, 10);
+  };
+
+  const endDate = getEndDate(startDate, days);
+
+  const toggleSelection = (item) => {
+    if (selectedItems.includes(item)) {
+      // If already selected, remove it
+      setSelectedItems(selectedItems.filter((i) => i !== item));
+    } else {
+      // If not selected, add it
+      setSelectedItems([...selectedItems, item]);
+    }
+  };
+  const handleGenerate = async () => {
+    try {
+      const res = await generateItinerary({
+        city,
+        days: Number(days),
+        budget: budget,
+        startDate: new Date().toISOString(),
+        preferences: selectedItems
+      });
+      
+      setItinerary(res.data.itinerary);
+      const itineraryId = res.data.savedItineraryId;
+      setItineraryId(itineraryId);
+
+      setLoadingHotels(true);
+
+      try {
+        const hotelRes = await getHotelRecommendations(
+          itineraryId,
+          budget
+        );
+        setHotels(hotelRes.hotels);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingHotels(false);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Error");
+    }
+  };
 
   return (
-    <div className="text-slate-800 mt-10 px-6 sm:px-20">
-      
-      {/* 1️⃣ INTRO SECTION */}
-      <section className="bg-orange-50/50 px-5 pt-10 pb-14">
-        <div className="max-w-3xl">
-          <h1 className="text-2xl md:text-3xl font-semibold">
-            Plan your trip, calmly.
-          </h1>
-          <p className="mt-3 text-slate-600 leading-relaxed">
-            Tell us your budget, time, and travel style — we’ll plan the rest
-            without clutter or stress.
-          </p>
-        </div>
-      </section>
-
-      {/* 2️⃣ TRIP PREFERENCES */}
-      <section className="px-6  max-w-4xl">
-        
-        {/* Budget */}
-        <div className="mb-8">
-          <label className="text-sm font-medium">
-            Budget (₹{budget} )
-          </label>
-          <div className="relative mt-3 w-80 max-w-full">
-            <input
-              type="range"
-              min="3000"
-              max="100000"
-              step="1000"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              className="w-full accent-orange-500"
-              
-            />
-            {/* Flags */}
-            <div className="absolute left-0 right-0 top-6 flex justify-between text-xs text-slate-500 select-none pointer-events-none">
-              <span>10k</span>
-              <span>30k</span>
-              <span>50k</span>
-              <span>70k</span>
-              <span>90k</span>
-            </div>
-          </div>
-          
-        </div>
-        <div className="mb-8">
-          <label className="text-sm font-medium pr-3">
-            Number of days
-          </label>
-          <input
-            type="number"
-            min="1"
-            max="10"
-            value={days}
-            onChange={(e) => setDays(e.target.value)}
-            className="mt-3 w-24 rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-          />
-        </div>
-
-        {/* Category */}
-        <div>
-          <label className="text-sm font-medium">
-            Travel style
-          </label>
-          <div className="mt-4 flex flex-wrap gap-3">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm transition
-                  ${
-                    category === cat
-                      ? "bg-orange-500 text-white"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                  }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 3️⃣ DESTINATION SELECTION */}
-      <section className="px-5 py-12 bg-slate-50">
-        <h2 className="text-xl font-semibold mb-6">
-          Choose a destination in Gujarat
-        </h2>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {destinations.map((dest) => (
-            <div
-              key={dest.id}
-              className="rounded-xl overflow-hidden bg-white"
-            >
-              <img
-                src={dest.image}
-                alt={dest.name}
-                className="sm:h-70 h-60 w-full object-fill"
+    <div className="min-h-screen bg-linear-to-br from-gray-100 to-gray-200 p-6 ">
+      <div className="bg-white p-6 mt-6 md:p-8 rounded-2xl shadow-lg max-w-6xl mx-auto border border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="md:col-span-4">
+            <label className="block text-lg font-semibold text-gray-700 mb-2">Destination</label>
+            <div className="relative">
+              <span className="absolute left-3 top-3.5 text-gray-400">📍</span>
+              <input
+                type="text"
+                placeholder="Where do you want to go?"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="w-full border border-gray-200 pl-6 md:pl-10 md:pr-4 py-3 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
               />
-              <div className="p-4">
-                <h3 className="font-medium">{dest.name}</h3>
-                <p className="text-sm text-slate-600 mt-1">
-                  {dest.category} · {dest.cost}
-                </p>
-                <button
-                  onClick={() => setSelectedDestination(dest)}
-                  className="mt-4 text-sm text-orange-500 hover:underline cursor-pointer"
-                >
-                  Select
-                </button>
-              </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 4️⃣ GENERATED OVERVIEW */}
-      {selectedDestination && (
-        <section className="px-5 max-w-4xl">
-          <h2 className="text-xl font-semibold mb-4">
-            Your trip overview
-          </h2>
-
-          <div className="bg-orange-50/60 rounded-xl p-6 text-sm leading-relaxed">
-            <p>
-              <strong>{days}-day trip to {selectedDestination.name}</strong>
-            </p>
-            <p className="mt-2 text-slate-700">
-              Estimated cost fits your budget. Travel style aligns with
-              {` ${category.toLowerCase() } preferences.`}
-            </p>
           </div>
-        </section>
-      )}
-
-      {/* 5️⃣ TRIP DETAILS */}
-      {selectedDestination && (
-        <section className="px-5 max-w-4xl space-y-10">
-          
-          {/* Transport */}
-          <div>
-            <h3 className="font-semibold mb-2">🚗 Transport</h3>
-            <p className="text-sm text-slate-600">
-              Train / Bus available · Approx ₹800–₹1,200
-            </p>
+          <div className="md:col-span-2">
+            <label className="block text-lg font-semibold text-gray-700 mb-2">Duration</label>
+            <div className="flex items-center border border-gray-200 rounded-xl px-3 py-3 focus-within:ring-2 focus-within:ring-orange-500 transition-all">
+              <input
+                type="number"
+                value={days}
+                onChange={(e) => setDays(e.target.value)}
+                className="w-full outline-none appearance-none"
+                min="1"
+              />
+              <span className="text-gray-500 text-sm ml-1">Days</span>
+            </div>
           </div>
 
-          {/* Hotels */}
-          <div>
-            <h3 className="font-semibold mb-2">🏨 Stay options</h3>
-            <ul className="text-sm text-slate-600 space-y-1">
-              <li>• Budget Hotel — ₹1,200/night</li>
-              <li>• Comfort Stay — ₹2,000/night</li>
-            </ul>
+          <div className="md:col-span-3">
+            <label className="block text-lg font-semibold text-gray-700 mb-2">Start Date</label>
+            <div className="flex items-center border border-gray-200 rounded-xl px-3 py-3 focus-within:ring-2 focus-within:ring-orange-500 transition-all">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full outline-none"
+              />
+            </div>
           </div>
 
-          {/* Food */}
-          <div>
-            <h3 className="font-semibold mb-2">🍽️ Food to try</h3>
-            <p className="text-sm text-slate-600">
-              Gujarati thali, local snacks, temple prasad
-            </p>
+          <div className="md:col-span-2">
+            <label className="block text-lg font-semibold text-gray-700 mb-2">Budget</label>
+            <div className="flex items-center border border-gray-200 rounded-xl  py-3 focus-within:ring-2 focus-within:ring-orange-500 transition-all">
+              <span className="mr-2">💰</span>
+              <select
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                className="w-50  ml-1 bg-transparent outline-none appearance-none cursor-pointer"
+              >
+                <option value="low" >Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
           </div>
 
-          {/* Itinerary */}
-          <div>
-            <h3 className="font-semibold mb-2">🗓️ Sample itinerary</h3>
-            <ul className="text-sm text-slate-600 space-y-1">
-              <li>Day 1 — Arrival & local visit</li>
-              <li>Day 2 — Temple & exploration</li>
-              <li>Day 3 — Leisure & return</li>
-            </ul>
-          </div>
-
-        </section>
-      )}
-
-      {/* 6️⃣ RECOMMENDATIONS */}
-      {selectedDestination && (
-        <section className="px-5 py-12 bg-slate-50">
-          <h3 className="font-semibold mb-4">
-            You may also like
-          </h3>
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {destinations
-              .filter((d) => d.name !== selectedDestination.name)
-              .map((d) => (
-                <div
-                  key={d.id}
-                  className="min-w-40 bg-white rounded-lg p-3"
+          <div className="md:col-span-12">
+            <label className="block text-lg font-semibold text-gray-700 mb-3">What are you interested in?</label>
+            <div id="preferences" className="flex flex-row flex-wrap lg:justify-center gap-2 p-4">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => toggleSelection(cat)}
+                  className={`border md:m-1.5 rounded-lg p-1 md:p-2 transition-all duration-200 ${selectedItems.includes(cat)
+                    ? "bg-amber-100  border-orange-500 shadow-md"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                    }`}
                 >
-                  <p className="text-sm font-medium">{d.name}</p>
-                  <p className="text-xs text-slate-600">{d.category}</p>
-                </div>
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+
+                  {selectedItems.includes(cat) && <span className="ml-2">✓</span>}
+                </button>
               ))}
+            </div>
           </div>
-        </section>
+
+          <div className="md:col-span-12 flex justify-center mt-2">
+            <button
+              onClick={handleGenerate}
+              disabled={loadingHotels}
+              className="w-full md:w-auto bg-linear-to-r from-orange-500 to-orange-600 text-white px-5 md:px-10 py-3 rounded-xl font-bold shadow-lg shadow-orange-200 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+            >
+              {loadingHotels ? "✨ Creating Magic..." : "Generate Itinerary"}
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      {itinerary && (
+        <div className="max-w-7xl mx-auto mt-8">
+          <h2 className="text-lg font-semibold mb-4">Your Plan</h2>
+
+          <div className="grid md:grid-cols-3 gap-6">
+
+            {itinerary.map((day) => (
+              <div key={day.day} className="bg-white rounded-xl shadow-md overflow-hidden">
+
+                <div className="bg-blue-100 p-4 flex items-center gap-3">
+                  <img
+                    src={
+                      day.places[0]?.image ||
+                      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=400"
+                    }
+                    alt=""
+                    className="w-14 h-14 rounded-md object-cover"
+                  />
+                  <h3 className="font-semibold">
+                    Day {day.day} - {day.date}
+                  </h3>
+                </div>
+
+                <div className="p-4 space-y-4">
+
+                  {["Morning", "Afternoon", "Evening"].map((slot) => {
+                    const filtered = day.places.filter(p => p.time === slot);
+
+                    if (!filtered.length) return null;
+
+                    return (
+                      <div key={slot}>
+                        <p className="text-sm text-gray-500 mb-1">
+                          {slot === "Morning" && "🌅"}
+                          {slot === "Afternoon" && "☀️"}
+                          {slot === "Evening" && "🌇"} {slot}
+                        </p>
+
+                        {filtered.map((p, i) => (
+                          <div
+                            key={i}
+                            className="flex justify-between items-center bg-gray-50 p-2 rounded mb-2"
+                          >
+                            <span className="text-sm">{p.name}</span>
+                            <button
+                              onClick={() => setSelectedPlace(p)}
+                              className="text-sm text-blue-500 hover:text-blue-700 font-medium cursor-pointer"
+                            >
+                              View Details
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+
+                  {day.places.length === 0 && (
+                    <p className="text-gray-400 text-sm">
+                      No places planned
+                    </p>
+                  )}
+
+                </div>
+              </div>
+            ))}
+
+          </div>
+        </div>
+      )}
+      {selectedPlace && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setSelectedPlace(null)}
+          ></div>
+
+          <div className="relative bg-white w-[95%] md:w-212.5 max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl animate-fadeIn">
+
+            <button
+              onClick={() => setSelectedPlace(null)}
+              className="absolute top-4 right-4 bg-white/90 hover:bg-red-100 w-10 h-10 rounded-full shadow-md text-xl"
+            >
+              ✕
+            </button>
+
+            <div className="relative h-75">
+
+              <img
+                src={
+                  selectedPlace.image
+                }
+                alt={selectedPlace.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-linear-to-r from-black/70 to-transparent"></div>
+              <div className="absolute bottom-6 left-6 text-white">
+                <h2 className="text-3xl font-bold">
+                  {selectedPlace.name}
+                </h2>
+
+                <p className="text-sm opacity-90 mt-1">
+                  {selectedPlace.category}
+                </p>
+              </div>
+
+            </div>
+
+            <div className="p-6">
+
+              <div className="flex items-center gap-3 mb-5">
+
+                <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
+                  ⭐ {selectedPlace.rating || "4.5"}
+                </div>
+
+                <div className="text-gray-500 text-sm">
+                  Highly rated destination
+                </div>
+
+              </div>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {selectedPlace.types?.map((type, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm"
+                  >
+                    {type}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold mb-2">
+                  About this place
+                </h3>
+
+                <p className="text-gray-600 leading-relaxed">
+                  {selectedPlace.description ||
+                    "No description available"}
+                </p>
+              </div>
+
+              <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+
+                <h3 className="text-lg font-semibold mb-3">
+                  Visitor Review
+                </h3>
+
+                <p className="text-gray-600 italic leading-relaxed">
+                  “{selectedPlace.review || "Amazing place to visit."}”
+                </p>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {loadingHotels && (
+        <p className="mt-6 text-center">Finding best hotels...</p>
+      )}
+
+      {hotels.length > 0 && (
+        <div className="max-w-5xl mx-auto mt-6">
+          <HotelSection hotels={hotels} />
+        </div>
       )}
     </div>
   );
 }
-export default Trip
+
+export default Trip;

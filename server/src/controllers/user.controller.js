@@ -16,7 +16,7 @@ const generateAccessandRefreshTokens = async (userId) => {
 
         return { accessToken, refreshToken }
     } catch (error) {
-        throw new ApiError(500, "Something went wrong from controller")
+        throw new ApiError(500, "Something went wrong")
     }
 }
 
@@ -60,7 +60,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
     const { email, username, password } = req.body;
     if (!(email || username)) {
-        throw new ApiError(400, 'Username or email is required from controller')
+        throw new ApiError(400, 'Username or email is required')
     }
     const user = await User.findOne(
         {
@@ -74,7 +74,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const isPasswordValid = await user.isPasswordMatch(password)
 
     if (!isPasswordValid) {
-        throw new ApiError(401, "Invalid Password from controller")
+        throw new ApiError(401, "Invalid Password")
     }
 
     // send it to server to fetch tokens
@@ -86,7 +86,8 @@ const loginUser = asyncHandler(async (req, res) => {
     // To secure cookies with read only mode
     const options = {
         httpOnly: true,
-        secure: true
+        secure: false,
+        sameSite: "lax"
     }
 
     return res
@@ -99,7 +100,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 {
                     user: loggedInUser, accessToken, refreshToken
                 },
-                "User logged in successfully from controller"
+                "User logged in successfully"
             )
         )
 })

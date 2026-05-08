@@ -10,6 +10,12 @@ const placeSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'city'
     },
+    cityName: {
+        type: String
+    },
+    stateName: {
+        type: String
+    },
     category: {
         type: String,
         enum: [

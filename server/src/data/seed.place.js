@@ -1,56 +1,95 @@
 import mongoose from "mongoose";
 import City from "../models/city.model.js";
 import Place from "../models/place.model.js";
-import { fetchHotels, fetchRestaurants, fetchAttractions } from "../services/apiServices.js";
-import transformPlaces from "../controllers/transformPlaces.controller.js"
+import {
+  fetchHotels,
+  fetchRestaurants,
+  fetchAttractions
+} from "../services/apiServices.js";
+import transformPlaces from "../controllers/transformPlaces.controller.js";
 
-const cities = ["Ahmedabad","Uttarakhand","Rajasthan"];
+const inputs = ["Ahmedabad", "Uttarakhand", "Rajasthan"];
 
 async function seedPlace() {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI + "/" + process.env.DB_NAME, {
-            serverSelectionTimeoutMS: 30000
-        })
-        console.log("Connected to MongoDB");
-        for (const city of cities) {
-            const cityDoc = await City.findOne({ $or: [{ name: city }, { state: city }] });
+  try {
+    await mongoose.connect(
+      process.env.MONGODB_URI + "/" + process.env.DB_NAME,
+      { serverSelectionTimeoutMS: 30000 }
+    );
 
-            if (!cityDoc) {
-                console.log(`❌ City not found: ${city}`);
-                continue;
-            }
+    console.log("✅ Connected to MongoDB");
 
-            let places = await Place.find({ city: cityDoc._id });
+    for (const input of inputs) {
+      console.log(`\n📍 Processing: ${input}`);
 
-            if (places.length === 0) {
-                console.log(`\n📍 Processing ${city}...`);
+      let cityDocs = [];
 
-                const fetchPlaceRaw = await fetchAttractions(city);
-                const hotelsRaw = await fetchHotels(city);
-                const restaurantRaw = await fetchRestaurants(city);
+      // 🔍 Check if input is a state
+      const stateMatches = await City.find({
+        state: { $regex: new RegExp(input, "i") }
+      });
 
-                const touristPlaces = await transformPlaces(fetchPlaceRaw, cityDoc, null);
-                const hotels = await transformPlaces(hotelsRaw, cityDoc, "hotel");
-                const restaurants = await transformPlaces(restaurantRaw, cityDoc, "restaurant");
-                
-                const allData = [
-                    ...(touristPlaces || []),
-                    ...(hotels || []),
-                    ...(restaurants || [])
-                ];
+      if (stateMatches.length > 0) {
+        cityDocs = stateMatches;
+      } else {
+        const singleCity = await City.findOne({
+          name: { $regex: new RegExp(input, "i") }
+        });
 
-                await Place.insertMany(allData);
-                console.log(`✅ Data inserted for ${city}`);
-            } else {
-                console.log(`ℹ️ Data already exists for ${city}`);
-            }
-        }
+        if (singleCity) cityDocs = [singleCity];
+      }
 
-        process.exit();
-    } catch (error) {
-        console.error("Error seeding places:", error);
-        process.exit(1);
+      if (!cityDocs.length) {
+        console.log(`❌ No city found for ${input}`);
+        continue;
+      }
+
+      // 🔥 OPTIONAL: Clean old data (avoid duplicates)
+      await Place.deleteMany({
+        cityName: { $in: cityDocs.map(c => c.name) }
+      });
+
+      console.log(`🧠 Fetching data from APIs...`);
+
+      const [attractionsRaw, hotelsRaw, restaurantsRaw] =
+        await Promise.all([
+          fetchAttractions(input),
+          fetchHotels(input),
+          fetchRestaurants(input)
+        ]);
+
+      console.log(`🔄 Transforming data...`);
+
+      const touristPlaces = transformPlaces(attractionsRaw, cityDocs, "tourist");
+      const hotels = transformPlaces(hotelsRaw, cityDocs, "hotel");
+      const restaurants = transformPlaces(
+        restaurantsRaw,
+        cityDocs,
+        "restaurant"
+      );
+
+      const allData = [
+        ...(touristPlaces || []),
+        ...(hotels || []),
+        ...(restaurants || [])
+      ].filter(p => p.location && p.location.coordinates.length === 2);
+
+      if (!allData.length) {
+        console.log(`⚠️ No valid data to insert for ${input}`);
+        continue;
+      }
+
+      await Place.insertMany(allData);
+
+      console.log(`✅ Inserted ${allData.length} places for ${input}`);
     }
+
+    console.log("\n🎉 Seeding completed!");
+    process.exit();
+  } catch (error) {
+    console.error("❌ Error seeding places:", error);
+    process.exit(1);
+  }
 }
 
 seedPlace();

@@ -4,6 +4,12 @@ const itinerarySchema = new Schema({
   city: { type: mongoose.Schema.Types.ObjectId, ref: "City" },
   days: Number,
   startDate: Date,
+  budget: {
+    type: String,
+    enum: ["High", "medium", "low"]
+  },
+  cityName: String,  
+  stateName: String, 
   plan: [
     {
       day: Number,
@@ -13,6 +19,12 @@ const itinerarySchema = new Schema({
           placeId: { type: mongoose.Schema.Types.ObjectId, ref: "Place" },
           name: String,
           category: String,
+          image: String,
+          images: [String],
+          description: String,
+          types: [String],
+          user_review: String,
+          rating: Number,
           location: {
             type: {
               type: String,

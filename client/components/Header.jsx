@@ -33,7 +33,7 @@ function Header() {
                             <div className="glow-underline"></div>
                         </li>
                         <li className="menu-item">
-                            <Link to="../Login" className="menu-link">Login</Link>
+                            <Link to="/Auth" className="menu-link">Login</Link>
                             <div className="glow-underline"></div>
                         </li>
                     </ul>
@@ -53,7 +53,7 @@ function Header() {
                         else if (item === "Plan a Trip") to = "/Plan-trip";
                         else if (item === "Expense Tracker") to = "/Expense-tracker";
                         else if (item === "Hotels") to = "/Hotels";
-                        else if (item === "Login") to = "../Login";
+                        else if (item === "Login") to = "/Auth";
                         return (
                             <li
                                 key={item}
@@ -68,7 +68,7 @@ function Header() {
                                     {item === "Plan a Trip" && <RiCalendarScheduleLine className="inline-block align-middle mr-2 h-5 w-5" />}
                                     {item === "Expense Tracker" && <RiMoneyRupeeCircleLine className="inline-block align-middle mr-2 h-5 w-5" />}
                                     {item === "Hotels" && <LiaHotelSolid className="inline-block align-middle mr-2 h-5 w-5" />}
-                                    {item === "Login" && <BiLogIn className="inline-block align-middle mr-2 h-5 w-5" />}
+                                    {item === "Auth" && <BiLogIn className="inline-block align-middle mr-2 h-5 w-5" />}
                                     {item}
                                 </Link>
                             </li>

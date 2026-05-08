@@ -1,41 +1,22 @@
 const upgradeResolution = (url) => {
   if (!url) return null;
 
-  if (url.includes("w") && url.includes("h")) {
-    return url.replace(/w\d+-h\d+/g, "w800-h600");
-  }
-
-  return url;
+  // 🔥 Properly replace FULL pattern
+  return url.replace(
+    /=w\d+-h\d+(-k-no)?/,
+    "=w1200-h900-k-no"
+  );
 };
-
 export const getHighQualityImage = (images) => {
-  if (!images) return null;
+  if (!Array.isArray(images)) return null;
 
-  if (Array.isArray(images)) {
-    const img = images.find(
-      (i) => typeof i === "string" && i.startsWith("http")
-    );
-    return upgradeResolution(img);
-  }
+  const googleImg = images.find(
+    (url) =>
+      typeof url === "string" &&
+      url.includes("googleusercontent")
+  );
 
-  if (Array.isArray(images)) {
-    const img = images.find(
-      (i) => typeof i?.url === "string" && i.url.startsWith("http")
-    );
-    return upgradeResolution(img?.url);
-  }
+  if (!googleImg) return null;
 
-  if (typeof images === "object") {
-    const values = Object.values(images);
-
-    const img = values.find(
-      (i) =>
-        (typeof i === "string" && i.startsWith("http")) ||
-        (typeof i?.url === "string" && i.url.startsWith("http"))
-    );
-
-    return upgradeResolution(typeof img === "string" ? img : img?.url);
-  }
-
-  return null;
+  return upgradeResolution(googleImg);
 };

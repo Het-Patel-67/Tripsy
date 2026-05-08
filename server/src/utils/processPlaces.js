@@ -2,7 +2,7 @@ import { getHighQualityImage } from "./imageHelper.js";
 
 export const processPlaces = async (places) => {
   try {
-    
+
     if (!Array.isArray(places)) return [];
 
     const processed = places.map((place) => {
@@ -10,7 +10,7 @@ export const processPlaces = async (places) => {
 
       return {
         ...place,
-        image: image || null, 
+        image: image || null
       };
     });
 

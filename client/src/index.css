@@ -10,7 +10,6 @@ body {
     transition: all 0.5s ease-in-out;
 }
 
-/* Anchor Tag (Text) Styles */
 .menu-link {
     display: block; /* Makes the whole area clickable */
     font-weight: 600;
@@ -30,7 +29,6 @@ body {
   color: #F97316; /* A shade of orange for active (clicked) text color */
 }
 
-/* The Underline DIV Styles */
 .glow-underline {
     position: absolute;
     bottom: 0;
@@ -49,7 +47,29 @@ body {
     clip-path: ellipse(50% 100% at 50% 50%);
 }
 
-/* Expand the underline width on parent LI hover */
 .menu-item:hover .glow-underline {
-    width: 100%; /* Expands to 70% of the LI's width */
+    width: 100%; 
+}
+
+#auth-page{
+    background-image: url('/assets/auth_page.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease;
 }
