@@ -35,7 +35,12 @@ export const getHotelRecommendations = async (
             cityName,
             stateName,
         });
-        return res.data;
+ 
+        // The backend returns { success: true, hotels: [...] }.
+        // Return the hotels array directly so callers can do:
+        //   const hotels = await getHotelRecommendations(...)
+        // instead of having to destructure res.hotels every time.
+        return res.data.hotels;
     } catch (error) {
         console.error("Hotel API error:", error);
         throw error;

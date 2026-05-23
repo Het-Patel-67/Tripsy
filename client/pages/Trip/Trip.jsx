@@ -243,14 +243,21 @@ function Trip() {
 
       setLoadingHotels(true);
       try {
-        const hotelRes = await getHotelRecommendations(
+        // getHotelRecommendations returns the hotels array directly (res.data.hotels
+        // is unwrapped inside apiService.js) — no further destructuring needed.
+        // stateName is pulled from the itinerary response and falls back to ""
+        // so the hotel controller's location filter always receives a string.
+        const stateName =
+          res.data.itinerary[0]?.places?.[0]?.stateName ?? "";
+
+        const fetchedHotels = await getHotelRecommendations(
           res.data.itinerary,
           budget,
           city,
-          res.data.itinerary[0]?.places?.[0]?.stateName
+          stateName
         );
 
-        setHotels(hotelRes.data.hotels || []);
+        setHotels(fetchedHotels || []);
       } catch (err) {
         console.error("Hotel fetch error:", err);
       } finally {
@@ -311,22 +318,21 @@ function Trip() {
 
   const handleSave = async () => {
     try {
-      await API.post(
-        "/api/itinerary/save",
-        {
-          cityName: city,
-          stateName: itinerary[0]?.places?.[0]?.stateName || "",
-          days: Number(days),
-          startDate,
-          itinerary,
-        },
-        { withCredentials: true }
-      );
+      // Send the raw itinerary shape the backend expects.
+      // The `formatted` state has extra `slots` keys added for the drag-and-drop
+      // UI — strip those so the save payload matches the backend schema.
+      const rawItinerary = itinerary.map(({ slots, ...rest }) => rest);
+
+      await API.post("/api/itinerary/save", {
+        cityName: city,
+        stateName: itinerary[0]?.places?.[0]?.stateName || "",
+        days: Number(days),
+        startDate,
+        itinerary: rawItinerary,
+      });
       setPopMsg({ title: "Itinerary Saved! 🗂️", body: "Your itinerary has been saved successfully." });
       setIsOpen(true);
     } catch (err) {
-      // BUG 11 FIX: was `Error message: ${err}` which renders "[object Object]"
-      // Now extracts the actual human-readable message from the response.
       setPopMsg({
         title: "Error",
         body: "Failed to save itinerary. Please try again.",
@@ -521,7 +527,6 @@ function Trip() {
                       className="overflow-hidden rounded-2xl border border-[#E7DDD0] bg-[#FFFCF9] shadow-[0_2px_12px_rgba(28,25,23,0.06)] transition-shadow duration-200 hover:shadow-[0_6px_24px_rgba(28,25,23,0.1)]"
                     >
                       <div className="relative h-45 overflow-hidden">
-                        {/* BUG 1 FIX: use proxyImg() helper instead of hardcoded localhost:8000 */}
                         <img
                           src={proxyImg(day.places[0]?.image)}
                           alt=""

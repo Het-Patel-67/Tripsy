@@ -51,20 +51,6 @@ export const getHotelRecommendations = async (req, res) => {
       return res.status(404).json({ message: "No hotels found" });
     }
 
-    // ── Location filtering (FIXED) ────────────────────────────────────────────
-    //
-    // BUG BEFORE: used OR between cityName and stateName checks.
-    // This caused Ahmedabad hotels (same state = Gujarat) to appear in
-    // Kutch results because stateName "Gujarat" matched for both cities.
-    //
-    // FIX: Strict city-first priority.
-    //   Step 1 — Try to match by cityName exactly.
-    //   Step 2 — Only if zero city matches found, fall back to stateName.
-    //            This handles cases where a place (e.g. a rural area) has
-    //            no cityName stored but does have a stateName.
-    //
-    // This ensures hotels from a different city in the same state
-    // never bleed into results.
 
     const cityMatches = hotels.filter(
       (h) =>
@@ -84,8 +70,6 @@ export const getHotelRecommendations = async (req, res) => {
               stateName &&
               h.stateName.toLowerCase() === stateName.toLowerCase()
           );
-
-    // ── Price parsing ─────────────────────────────────────────────────────────
 
     const parsePrice = (price) => {
       if (!price) return null;
