@@ -27,20 +27,20 @@ const registerUser = asyncHandler(async (req, res) => {
             message: 'Please provide a valid email address.'
         });
     }
-    
+
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-+=\[\]{}|;:'",.<>\/?`])(?!.*\s).{8,}$/;
     if (!strongPasswordRegex.test(password)) {
         return res.status(400).json({
             message: 'Password is too weak.'
         });
     }
-    
+
     if ([username, password, email, mobile].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required");
     }
-    
+
     const existedUser = await User.findOne({ $or: [{ mobile }, { email: email.toLowerCase() }, { username }] });
-    
+
     if (existedUser) {
         throw new ApiError(409, "User already exists");
     }
@@ -85,10 +85,12 @@ const loginUser = asyncHandler(async (req, res) => {
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
     const options = {
-  httpOnly: true,
-  secure: true,
-  sameSite: "none",
-};
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
 
     return res
         .status(200)
@@ -108,29 +110,30 @@ const loginUser = asyncHandler(async (req, res) => {
 // Called by AuthContext on every app load to restore session from cookie.
 // verifyJWT runs first — if cookie is missing/expired it returns 401 automatically.
 const getMe = asyncHandler(async (req, res) => {
-  return res.status(200).json(new ApiResponse(200, req.user, "Authenticated"));
+    return res.status(200).json(new ApiResponse(200, req.user, "Authenticated"));
 })
 
 // POST /api/users/logout
 // Clears both httpOnly cookies and removes refreshToken from DB.
 const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
-    { $unset: { refreshToken: 1 } },
-    { new: true }
-  );
- 
-  const options = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
-  };
- 
-  return res
-    .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "Logged out successfully"));
+    await User.findByIdAndUpdate(
+        req.user._id,
+        { $unset: { refreshToken: 1 } },
+        { new: true }
+    );
+
+    const options = {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+    };
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "Logged out successfully"));
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -161,8 +164,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "none",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     };
 
     return res
