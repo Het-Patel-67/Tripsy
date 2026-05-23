@@ -8,7 +8,6 @@ function transformPlaces(results = [], cityDocs = [], fallbackCategory) {
       .map((place) => {
         const category = mapCategory(place, fallbackCategory);
 
-        // 🔍 Smart city matching
         const matchedCity = cityDocs.find((city) => {
           const name = city.name.toLowerCase();
 
@@ -18,13 +17,10 @@ function transformPlaces(results = [], cityDocs = [], fallbackCategory) {
           );
         });
 
-        // fallback → first city
         const cityDoc = matchedCity || cityDocs[0];
 
         const lng = place.gps_coordinates?.longitude;
         const lat = place.gps_coordinates?.latitude;
-
-        // ❌ skip invalid coordinates
         if (
           typeof lng !== "number" ||
           typeof lat !== "number"
@@ -35,8 +31,6 @@ function transformPlaces(results = [], cityDocs = [], fallbackCategory) {
         return {
           name: place.title || "Unknown Place",
           category,
-
-          // ✅ FIXED RELATION
           city: cityDoc._id,
           cityName: cityDoc.name,
           stateName: cityDoc.state,
@@ -48,8 +42,11 @@ function transformPlaces(results = [], cityDocs = [], fallbackCategory) {
 
           images: [
             place.thumbnail,
-            place.serpapi_thumbnail
           ].filter(Boolean),
+
+          optimizedImage: "",
+
+          imageUploaded: false,
 
           price: extractPrice(place.price),
           amenities: place.amenities || [],

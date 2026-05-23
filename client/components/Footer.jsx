@@ -23,7 +23,7 @@ function Footer() {
                         </h3>
                         <ul className="mt-4 space-y-1 text-sm">
                             <li>
-                                <a href="/plan" className="hover:text-orange-500 transition">
+                                <a href="/plan-trip" className="hover:text-orange-500 transition">
                                     Plan a Trip
                                 </a>
                             </li>
@@ -33,7 +33,7 @@ function Footer() {
                                 </a>
                             </li>
                             <li>
-                                <a href="/expenses" className="hover:text-orange-500 transition">
+                                <a href="/expense-tracker" className="hover:text-orange-500 transition">
                                     Expense Tracker
                                 </a>
                             </li>

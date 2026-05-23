@@ -24,6 +24,11 @@ const userSchema = new Schema({
             validator: (value) => validator.isEmail(value),
             message: '{VALUE} is not a valid email address'
         }
+    },
+    mobile: {
+        type: String,
+        required: true,
+        unique: true
     }
 }, { timestamps: true })
 

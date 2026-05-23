@@ -21,7 +21,7 @@ const generateAccessandRefreshTokens = async (userId) => {
 }
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { username, password, email } = req.body;
+    const { username, password, email, mobile } = req.body;
     if (!email || !validator.isEmail(email)) {
         return res.status(400).json({
             message: 'Please provide a valid email address.'
@@ -35,11 +35,11 @@ const registerUser = asyncHandler(async (req, res) => {
         });
     }
     
-    if ([username, password, email].some((field) => field?.trim() === "")) {
+    if ([username, password, email, mobile].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required");
     }
     
-    const existedUser = await User.findOne({ $or: [{ email: email.toLowerCase() }, { username }] });
+    const existedUser = await User.findOne({ $or: [{ mobile }, { email: email.toLowerCase() }, { username }] });
     
     if (existedUser) {
         throw new ApiError(409, "User already exists");
@@ -48,6 +48,7 @@ const registerUser = asyncHandler(async (req, res) => {
         username: username.toLowerCase(),
         password,
         email,
+        mobile
     })
 
     const createdUser = await User.findById(newUser._id).select("-password -__v -refreshToken");
@@ -104,6 +105,34 @@ const loginUser = asyncHandler(async (req, res) => {
             )
         )
 })
+// GET /api/users/me
+// Called by AuthContext on every app load to restore session from cookie.
+// verifyJWT runs first — if cookie is missing/expired it returns 401 automatically.
+const getMe = asyncHandler(async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, req.user, "Authenticated"));
+})
+
+// POST /api/users/logout
+// Clears both httpOnly cookies and removes refreshToken from DB.
+const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    { $unset: { refreshToken: 1 } },
+    { new: true }
+  );
+ 
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  };
+ 
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "Logged out successfully"));
+});
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken =
@@ -146,4 +175,4 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         });
 });
 
-export { registerUser, loginUser, refreshAccessToken };
+export { registerUser, loginUser, refreshAccessToken, getMe, logoutUser };

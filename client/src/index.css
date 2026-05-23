@@ -1,61 +1,72 @@
 @import "tailwindcss";
 
 body {
-    background-color: #fcfaf5;
+  background-color: #fcfaf5;
 }
+
 /* Container LI Styles */
 .menu-item {
-    position: relative; /* Needed for absolute positioning of the underline */
-    /* This transition is for any background color change on the li itself, though we use a div for the line */
-    transition: all 0.5s ease-in-out;
+  position: relative;
+  /* Needed for absolute positioning of the underline */
+  /* This transition is for any background color change on the li itself, though we use a div for the line */
+  transition: all 0.5s ease-in-out;
 }
 
 .menu-link {
-    display: block; /* Makes the whole area clickable */
-    font-weight: 600;
-    padding-bottom: 3px; /* py-3 */
-    transition: color 0.3s ease-in-out;
-    text-decoration: none; 
-    color: #374151;
+  display: block;
+  /* Makes the whole area clickable */
+  font-weight: 600;
+  padding-bottom: 3px;
+  /* py-3 */
+  transition: color 0.3s ease-in-out;
+  text-decoration: none;
+  color: #374151;
 }
 
 /* Text color change on hover */
 .menu-item:hover .menu-link {
-    color: #F97316; /* A shade of orange for hover text color */
-    text-shadow: 0 0 8px rgba(59,130,246,0.5);
+  color: #F97316;
+  /* A shade of orange for hover text color */
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
 }
+
 .menu-item:active .menu-link,
 .menu-link:active {
-  color: #F97316; /* A shade of orange for active (clicked) text color */
+  color: #F97316;
+  /* A shade of orange for active (clicked) text color */
 }
 
 .glow-underline {
-    position: absolute;
-    bottom: 0;
-    left: 50%; /* Start the line centered */
-    transform: translateX(-50%); /* Pull back by half its width to truly center it */
-    height: 3px; /* Adjust this value to control the maximum thickness */
-    width: 0; /* Initially hidden */
-    
-    /* The radial gradient background for the glowing/varying color effect */
-    background: radial-gradient(ellipse at center, #ff7e5f 0%, #feb47b 50%, #ff7e5f 100%);
-    
-    /* Smooth transition for the width expansion */
-    transition: width 0s ease-in-out;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  /* Start the line centered */
+  transform: translateX(-50%);
+  /* Pull back by half its width to truly center it */
+  height: 3px;
+  /* Adjust this value to control the maximum thickness */
+  width: 0;
+  /* Initially hidden */
 
-    /* CRITICAL: Creates the "slim ends, big center" curved shape */
-    clip-path: ellipse(50% 100% at 50% 50%);
+  /* The radial gradient background for the glowing/varying color effect */
+  background: radial-gradient(ellipse at center, #ff7e5f 0%, #feb47b 50%, #ff7e5f 100%);
+
+  /* Smooth transition for the width expansion */
+  transition: width 0s ease-in-out;
+
+  /* CRITICAL: Creates the "slim ends, big center" curved shape */
+  clip-path: ellipse(50% 100% at 50% 50%);
 }
 
 .menu-item:hover .glow-underline {
-    width: 100%; 
+  width: 100%;
 }
 
-#auth-page{
-    background-image: url('/assets/auth_page.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+#auth-page {
+  background-image: url('/assets/auth_page.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 @keyframes fadeIn {
@@ -72,4 +83,13 @@ body {
 
 .animate-fadeIn {
   animation: fadeIn 0.25s ease;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

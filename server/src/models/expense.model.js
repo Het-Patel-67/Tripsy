@@ -22,7 +22,7 @@ const expenseSchema = new mongoose.Schema({
     tripId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Itinerary",
-        required: true,
+        required: false,
         index: true
     },
 
@@ -58,7 +58,7 @@ const expenseSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ["food", "transport", "hotel", "activity", "shopping", "other"],
+        enum: ["food", "transport", "hotel", "activities", "shopping", "other"],
         default: "other",
         index: true
     },

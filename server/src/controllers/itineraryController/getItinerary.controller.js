@@ -1,18 +1,38 @@
-import { asyncHandler } from "../../utils/asyncHandler.js";
-import Itinerary from "../../models/itinerary.model.js";
+import { asyncHandler }
+from "../../utils/asyncHandler.js";
 
-export const getItineraryById = asyncHandler (async (req, res) => {
+import Itinerary
+from "../../models/itinerary.model.js";
+
+export const getItineraryById =
+  asyncHandler(async (req, res) => {
+
     const { id } = req.params;
 
-    const itinerary = await Itinerary.findById(id);
+    const itinerary =
+      await Itinerary.findById(id);
 
     if (!itinerary) {
-      return res.status(404).json({ message: "Not found" });
+
+      return res.status(404).json({
+        message:
+          "Itinerary not found"
+      });
     }
 
-    if (itinerary.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Unauthorized" });
+    if (
+      itinerary.user.toString() !==
+      req.user._id.toString()
+    ) {
+
+      return res.status(403).json({
+        message:
+          "Unauthorized"
+      });
     }
 
-    res.json(itinerary);
+    res.json({
+      success: true,
+      itinerary
+    });
 });

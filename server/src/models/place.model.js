@@ -50,6 +50,15 @@ const placeSchema = new Schema({
     images: {
         type: [String]
     },
+    optimizedImage: {
+        type: String,
+        default: null
+    },
+
+    imageUploaded: {
+        type: Boolean,
+        default: false
+    },
     price: {
         type: Number
     },
@@ -69,7 +78,7 @@ const placeSchema = new Schema({
             required: true
         },
         coordinates: {
-            type: [Number], 
+            type: [Number],
             required: true
         }
     },
@@ -80,9 +89,17 @@ const placeSchema = new Schema({
 }, { timestamps: true })
 
 placeSchema.index({ location: "2dsphere" });
-placeSchema.index({ category: 1 })
-placeSchema.index({ city: 1, category: 1, rating: -1 })
-placeSchema.index({ rating: -1, category: 1, location: "2dsphere" })
+placeSchema.index({
+    city: 1
+});
+
+placeSchema.index({
+    category: 1
+});
+
+placeSchema.index({
+    rating: -1
+});
 placeSchema.index(
     { fetchedAt: 1 },
     { expireAfterSeconds: 2592000 }
