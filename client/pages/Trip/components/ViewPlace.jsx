@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function ViewPlace({ selectedPlace, setSelectedPlace }) {
+export default function ViewPlace({ selectedPlace, setSelectedPlace, proxyImg }) {
     return (
         <>
             {
@@ -24,9 +24,8 @@ export default function ViewPlace({ selectedPlace, setSelectedPlace }) {
 
                                 <img
                                     src={
-                                        selectedPlace.optimizedImage ||
-                                        `http://localhost:8000/api/proxy-image?url=${encodeURIComponent(selectedPlace.image)}` ||
-                                        `http://localhost:8000/api/proxy-image?url=${encodeURIComponent(selectedPlace.images?.[0])}` 
+                                        proxyImg(selectedPlace.image) ||
+                                        proxyImg(selectedPlace.images?.[0])
                                     }
                                     alt={selectedPlace.name}
                                     loading="lazy"
@@ -44,7 +43,7 @@ export default function ViewPlace({ selectedPlace, setSelectedPlace }) {
                                             e.currentTarget.src !== selectedPlace.images[0]
                                         ) {
                                             e.currentTarget.src =
-                                                `http://localhost:8000/api/proxy-image?url=${encodeURIComponent(selectedPlace.images[0])}`;
+                                                proxyImg(selectedPlace.images[0]);
 
                                             return;
                                         }

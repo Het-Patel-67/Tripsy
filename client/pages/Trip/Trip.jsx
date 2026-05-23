@@ -623,7 +623,7 @@ function Trip() {
             </>
           )}
 
-          <ViewPlace selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
+          <ViewPlace selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} proxyImg={proxyImg} />
 
           {loadingHotels && (
             <div className="mt-5 flex items-center justify-center gap-3 rounded-2xl border border-[#E7DDD0] bg-[#FFFCF9] p-5 text-sm text-stone-400">
