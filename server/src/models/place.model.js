@@ -102,7 +102,7 @@ placeSchema.index({
 });
 placeSchema.index(
     { fetchedAt: 1 },
-    { expireAfterSeconds: 2592000 }
+    { expireAfterSeconds: 5184000 }
 );
 const Place = mongoose.model('Place', placeSchema);
 
