@@ -7,7 +7,7 @@ import axios from 'axios'
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: [process.env.CORS_ORIGIN,"http://localhost:5173"],
      methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
     credentials: true,
 }));
