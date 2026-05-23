@@ -12,7 +12,7 @@ const generateAccessandRefreshTokens = async (userId) => {
         const refreshToken = user.generateRefreshToken()
 
         user.refreshToken = refreshToken
-        await user.save({ validateBeforSave: false })
+        await user.save({ validateBeforeSave: false })
 
         return { accessToken, refreshToken }
     } catch (error) {
@@ -84,12 +84,11 @@ const loginUser = asyncHandler(async (req, res) => {
     // Not required
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
-    // To secure cookies with read only mode
     const options = {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax"
-    }
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+};
 
     return res
         .status(200)
@@ -124,7 +123,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "none",
   };
  
   return res
@@ -163,6 +162,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const options = {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
     };
 
     return res
