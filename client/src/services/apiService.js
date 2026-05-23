@@ -1,42 +1,45 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+    baseURL: import.meta.env.VITE_API_URL,
+    // withCredentials no longer needed — auth is handled via Bearer token,
+    // not cross-site cookies. Removing it avoids CORS preflight complications.
 });
 
-export const generateItinerary = (data) =>
-  API.post("/api/itinerary", data);
+// Attach the JWT from localStorage to every outgoing request automatically.
+// This runs before every API call, so the token is always fresh from storage.
+API.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
-export const getItineraryById = (id) =>
-  API.get(`/api/itinerary/${id}`);
+export const generateItinerary = (data) => API.post("/api/itinerary", data);
 
-export const getMyItineraries = () =>
-  API.get("/api/itinerary/my-itineraries");
+export const getItineraryById = (id) => API.get(`/api/itinerary/${id}`);
+
+export const getMyItineraries = () => API.get("/api/itinerary/my-itineraries");
 
 export const getHotelRecommendations = async (
-  itinerary, budget, cityName, stateName
+    itinerary,
+    budget,
+    cityName,
+    stateName
 ) => {
-  try {
-    const res = await API.post(
-      "/api/itinerary/hotel-recommendations",
-      {
-        itinerary,
-        budget,
-        cityName: cityName,
-        stateName: stateName
-      },
-      {
-        withCredentials: true
-      }
-    );
-
-    return res.data;
-  } catch (error) {
-    console.error("Hotel API error:", error);
-    throw error;
-  }
+    try {
+        const res = await API.post("/api/itinerary/hotel-recommendations", {
+            itinerary,
+            budget,
+            cityName,
+            stateName,
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Hotel API error:", error);
+        throw error;
+    }
 };
- 
 
-export default API ;
+export default API;

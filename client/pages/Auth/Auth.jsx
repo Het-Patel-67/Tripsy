@@ -79,10 +79,11 @@ export default function Auth() {
 
         const res = await API.post("/api/users/login", payload);
 
-        // ── KEY CHANGE: update AuthContext instead of window.location.href ──
-        // This avoids a full page reload and keeps the SPA state intact.
-        // The httpOnly cookie is already set by the server response.
-        login(res.data?.data?.user);
+        // Pass both the user object AND the token to AuthContext.
+        // AuthContext.login() saves the token to localStorage so the
+        // Axios interceptor can attach it to all future requests.
+        const { user, accessToken } = res.data?.data;
+        login(user, accessToken);
 
         setPopMsg({
           title: "Welcome back! 👋",
