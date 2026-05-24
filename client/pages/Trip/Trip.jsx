@@ -13,7 +13,7 @@ import {
   Draggable,
 } from "@hello-pangea/dnd";
 
-
+// VITE
 const minimalStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&display=swap');
 
@@ -204,7 +204,7 @@ function Trip() {
   // ── BUG 1 FIX: proxy image URL uses env variable, not hardcoded localhost ──
   // In production localhost:8000 doesn't exist on the user's machine.
   // VITE_API_URL is set to "" in production (same-origin) or the dev server URL.
-  const API_BASE = import.meta.env.VITE_API_URL || "";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
   const proxyImg = (url) =>
     url ? `${API_BASE}/api/proxy-image?url=${encodeURIComponent(url)}` : "";
 

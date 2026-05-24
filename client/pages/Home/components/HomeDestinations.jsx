@@ -14,7 +14,6 @@ export function HomeDestinations() {
       { name: "Dwarka",             image: "/assets/places/dwarka.jpg"       },
     ]
     const handleDestinationClick = (placeName) => {
-        console.log("HELLO")
     navigate('/plan-trip', { state: { city: placeName } })
   }
   return (

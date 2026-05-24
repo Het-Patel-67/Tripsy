@@ -208,7 +208,7 @@ export default function SplitTab({ tripId }) {
               ↻ Refresh
             </button>
 
-           
+          
             {!allSettledUp && (
               <button onClick={handleCopy}
                 className={`cursor-pointer rounded-xl border px-3 py-2 text-sm font-semibold transition-all ${
@@ -226,7 +226,7 @@ export default function SplitTab({ tripId }) {
         {!allSettledUp && (
           <div className="mt-4 grid grid-cols-3 gap-3">
             {[
-              { label: "Transactions needed", value: transactions.length },
+              { label: "Transct. needed", value: transactions.length },
               { label: "Pending",              value: pendingCount },
               { label: "Total to settle",      value: fmt(totalToSettle) },
             ].map((s) => (
@@ -260,11 +260,7 @@ export default function SplitTab({ tripId }) {
             <p className="text-[14px] font-semibold uppercase tracking-widest text-stone-400">
               Payments to make
             </p>
-            {settledCount > 0 && (
-              <p className="text-[14px] text-emerald-600 font-semibold">
-                {settledCount} marked as done
-              </p>
-            )}
+            
           </div>
 
           {transactions.map((t, idx) => {
@@ -301,15 +297,7 @@ export default function SplitTab({ tripId }) {
                   <Avatar name={t.to} />
 
                   {/* Mark settled toggle */}
-                  <button
-                    onClick={() => toggleSettled(idx)}
-                    className={`ml-2 cursor-pointer shrink-0 rounded-xl border px-3 py-2 text-md font-semibold transition-all ${
-                      isSettled
-                        ? "border-emerald-300 bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                        : "border-[#E7DDD0] bg-white text-stone-400 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700"
-                    }`}>
-                    {isSettled ? "✓ Done" : "Mark done"}
-                  </button>
+                  
                 </div>
               </div>
             );
