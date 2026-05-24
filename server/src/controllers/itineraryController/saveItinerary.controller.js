@@ -28,12 +28,13 @@ export const saveItinerary =
     }
 
     // Prevent accidental duplicate save
+    const daysNum = Number(days);
     const existing =
       await Itinerary.findOne({
         user: req.user._id,
         cityName,
         startDate,
-        days
+        days: daysNum
       });
 
     if (existing) {
@@ -53,7 +54,7 @@ export const saveItinerary =
 
         stateName,
 
-        days,
+        days: daysNum,
 
         startDate,
 

@@ -325,7 +325,7 @@ function Trip() {
       const rawItinerary = itinerary.map(({ slots, ...rest }) => rest);
 
       await API.post("/api/itinerary/save", {
-        cityName: trimmedCity,
+        cityName: city.trim(),
         stateName: itinerary[0]?.places?.[0]?.stateName || "",
         days: Number(days),
         startDate,
