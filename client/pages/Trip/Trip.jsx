@@ -215,14 +215,14 @@ function Trip() {
       setIsOpen(true);
       return;
     }
-
+    const trimmedCity = city.trim();
     setLoadingItinerary(true);
     setItinerary(null);
     setHotels([]);
 
     try {
       const res = await generateItinerary({
-        city,
+        city: trimmedCity,
         days: Number(days),
         budget,
         startDate,
@@ -239,6 +239,7 @@ function Trip() {
       });
 
       setItinerary(formatted);
+      
       setLoadingItinerary(false);
 
       setLoadingHotels(true);
@@ -253,7 +254,7 @@ function Trip() {
         const fetchedHotels = await getHotelRecommendations(
           res.data.itinerary,
           budget,
-          city,
+          trimmedCity,
           stateName
         );
 
@@ -324,7 +325,7 @@ function Trip() {
       const rawItinerary = itinerary.map(({ slots, ...rest }) => rest);
 
       await API.post("/api/itinerary/save", {
-        cityName: city,
+        cityName: trimmedCity,
         stateName: itinerary[0]?.places?.[0]?.stateName || "",
         days: Number(days),
         startDate,
@@ -396,9 +397,9 @@ function Trip() {
                   <span className="shrink-0 text-base">📍</span>
                   <input
                     type="text"
-                    placeholder="Where do you want to go?"
+                    placeholder="Enter City/State name only"
                     value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={(e) => setCity(e.target.value.trimStart())}
                     className="min-w-0 flex-1 bg-transparent text-sm text-[#1C1917] outline-none placeholder:text-stone-300"
                   />
                 </div>

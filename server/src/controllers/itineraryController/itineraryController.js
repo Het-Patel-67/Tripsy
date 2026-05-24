@@ -167,8 +167,8 @@ async function hasFreshCachedPlaces(input, daysNeeded) {
 }
 
 export const generateItinerary = asyncHandler(async (req, res) => {
-  const { city, days, preferences = [], startDate } = req.body;
-
+  const { city: trimmedCity, days, preferences = [], startDate } = req.body;
+  const city = trimmedCity.trim();
   if (!city || !days || !startDate) {
     return res.status(400).json({ message: "City, days and startDate required" });
   }
