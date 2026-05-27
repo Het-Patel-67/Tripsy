@@ -270,7 +270,7 @@ function Trip() {
       setLoadingItinerary(false);
       setPopMsg({
         title: "Error",
-        body: "Failed to generate itinerary. Please try again.",
+        body: "Please Enter Correct City/State of India",
       });
       setIsOpen(true);
     }
