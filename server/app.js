@@ -27,6 +27,13 @@ app.use("/api/destination",destiRouter);
 app.use("/api/itinerary",itineraryRouter);
 app.use("/api/expenses", expenseTrackerRouter);
 app.use(express.static("public"));
+app.get("/ping", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Server is active",
+    time: new Date()
+  });
+});
 app.get('/api/proxy-image', async (req, res) => {
   try {
     const { url } = req.query;
