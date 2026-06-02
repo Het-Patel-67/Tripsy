@@ -106,7 +106,7 @@ export default function Auth() {
         setIsOpen(true);
       }
     } catch (err) {
-      setError("Something went wrong");
+      setError("Please check your inputs and try again.");
     } finally {
       setLoading(false);
     }
@@ -214,6 +214,9 @@ export default function Auth() {
                   <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-widest text-stone-400">Password</label>
                   <input type="password" name="password" placeholder="Name@1234"
                     value={form.password} onChange={handleChange} className={inputCls} />
+                    <p className="font-dm text-xs text-orange-400 mt-1">
+                     *Min. 8 characters with at least one special character, uppercase, lowercase and number.
+                    </p>
                 </div>
 
                 {!isLogin && (
