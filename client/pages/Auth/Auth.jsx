@@ -196,8 +196,8 @@ export default function Auth() {
 
                 {isLogin && (
                   <div>
-                    <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-widest text-stone-400">Email or Username</label>
-                    <input type="text" name="emailOrUsername" placeholder="you@email.com or username"
+                    <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-widest text-stone-400">Email</label>
+                    <input type="text" name="emailOrUsername" placeholder="you@email.com"
                       value={form.emailOrUsername} onChange={handleChange} className={inputCls} />
                   </div>
                 )}
