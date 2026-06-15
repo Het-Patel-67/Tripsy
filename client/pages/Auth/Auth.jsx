@@ -86,7 +86,7 @@ export default function Auth() {
         login(user, accessToken);
 
         setPopMsg({
-          title: "Welcome back! 👋",
+          title: "Welcome back! ",
           body:  "You've logged in successfully. Taking you to your dashboard…",
         });
         setIsOpen(true);
@@ -100,7 +100,7 @@ export default function Auth() {
         });
 
         setPopMsg({
-          title: "Account Created! 🎉",
+          title: "Account Created! ",
           body:  "Your account has been created. Please log in to continue.",
         });
         setIsOpen(true);

@@ -83,9 +83,9 @@ export default function ItineraryCard({ item, index, onView }) {
 
           {/* Date range */}
           <div className="mb-3 flex items-center gap-1.5 text-xs text-stone-400">
-            <span>📅</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="rgba(70,146,221,1)"><path d="M7 3V1H9V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V9H20V5H17V7H15V5H9V7H7V5H4V19H10V21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7ZM17 12C14.7909 12 13 13.7909 13 16C13 18.2091 14.7909 20 17 20C19.2091 20 21 18.2091 21 16C21 13.7909 19.2091 12 17 12ZM11 16C11 12.6863 13.6863 10 17 10C20.3137 10 23 12.6863 23 16C23 19.3137 20.3137 22 17 22C13.6863 22 11 19.3137 11 16ZM16 13V16.4142L18.2929 18.7071L19.7071 17.2929L18 15.5858V13H16Z"></path></svg>
             <span>{formatDate(item.startDate)}</span>
-            <span className="text-stone-300">→</span>
+            <span className="text-stone-500"> to </span>
             <span>{getEndDate(item.startDate, item.days)}</span>
           </div>
 
@@ -100,7 +100,7 @@ export default function ItineraryCard({ item, index, onView }) {
                 {i > 0 && <div key={`div-${i}`} className="h-6 w-px bg-[#E7DDD0]" />}
                 <div key={s.label} className="flex flex-1 flex-col items-center">
                   <span className="text-base font-bold text-[#1C1917]">{s.value}</span>
-                  <span className="text-[10px] uppercase tracking-wider text-stone-400">{s.label}</span>
+                  <span className="text-[11px] uppercase tracking-wider text-stone-400">{s.label}</span>
                 </div>
               </Fragment>
             ))}
@@ -127,23 +127,23 @@ export default function ItineraryCard({ item, index, onView }) {
           <div className="mb-4 space-y-1.5">
             {(item.plan || []).slice(0, 2).map((day) => (
               <div key={day.day} className="flex items-start gap-2 rounded-lg bg-stone-50 px-3 py-2">
-                <span className="mt-0.5 shrink-0 text-[10px] font-bold uppercase tracking-wider text-amber-600">
+                <span className="mt-0.5 shrink-0 text-md font-bold text-amber-600">
                   Day {day.day}
                 </span>
-                <span className="truncate text-[11px] leading-relaxed text-stone-500">
+                <span className="truncate text-sm leading-relaxed text-stone-500">
                   {(day.places || []).map((p) => p.name).join(" · ") || "No places"}
                 </span>
               </div>
             ))}
             {(item.plan || []).length > 2 && (
-              <p className="pl-3 text-[11px] text-stone-400">
+              <p className="pl-3 text-sm text-stone-400">
                 +{item.plan.length - 2} more day{item.plan.length - 2 > 1 ? "s" : ""}…
               </p>
             )}
           </div>
 
           {/* Saved date */}
-          <p className="mb-4 text-[10px] text-stone-300">
+          <p className="mb-4 text-sm text-stone-400">
             Saved on {formatDate(item.createdAt)}
           </p>
 
@@ -160,7 +160,7 @@ export default function ItineraryCard({ item, index, onView }) {
               className="cursor-pointer rounded-xl border border-[#E7DDD0] bg-white px-3.5 py-2.5 text-xs font-semibold text-stone-500 transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-500"
               title="Delete itinerary"
             >
-              🗑️
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="rgba(124,115,115,1)"><path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path></svg>
             </button>
           </div>
         </div>

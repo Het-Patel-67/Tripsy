@@ -183,7 +183,7 @@ export default function ExpenseTracker({ tripId = null }) {
         paidBy: { name: form.paidBy.name },
         participants: form.participants
           .filter((p) => p.name.trim())
-          .map((p) => ({ name: p.name, share: parseFloat(p.share) || 0,})),
+          .map((p) => ({ name: p.name, share: parseFloat(p.share) || 0, })),
       };
       if (editingId) {
         await API.put(`/api/expenses/edit/${editingId}`, payload);
@@ -253,68 +253,39 @@ export default function ExpenseTracker({ tripId = null }) {
       <div className="font-dm  min-h-screen bg-[#F5EFE6] text-[#1C1917]">
 
         <div
-          className="relative overflow-hidden px-8 pt-18 pb-10"
-          style={{ background: "linear-gradient(135deg,#1C1917 0%,#292524 60%,#1C3557 100%)" }}
-        >
+          className="relative object-cover h-[60vh] overflow-hidden"
+         >
+          <img src="/assets/default/expense.png" alt="Hero" className="absolute inset-0 w-full h-[60vh] object-fill" />
           <div className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage: "linear-gradient(rgba(255,255,255,0.025)1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025)1px,transparent 1px)",
-              backgroundSize: "40px 40px",
-            }}
-          />
-          <div className="pointer-events-none absolute inset-0"
-            style={{ background: "radial-gradient(ellipse at 15% 50%,rgba(217,119,6,0.15)0%,transparent 50%),radial-gradient(ellipse at 85% 20%,rgba(14,165,233,0.1)0%,transparent 40%)" }}
           />
           <div className="pointer-events-none absolute -right-10 -top-10 h-72 w-72 rounded-full border border-white/5" />
           <div className="pointer-events-none absolute right-12 top-12 h-44 w-44 rounded-full border border-amber-500/10" />
 
           <div className="relative z-10 mx-auto max-w-6xl">
-            <div className="mb-2 flex items-center gap-2 text-sm">
-              <a href="/trip" className="text-white/35 hover:text-white/60 transition-colors">Home</a>
-              <span className="text-white/20">/</span>
-              <span className="text-amber-400/80">Expense Tracker</span>
-            </div>
-            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-              <div>
-                <span className="mb-3 inline-block rounded-full border border-amber-400/35 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-400">
+            
+            
+              <div className="flex flex-col flex-wrap mt-25 px-4">
+                <span className="mb-3 rounded-full border border-amber-400/35 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-400 w-37.5">
                   ✦ Trip Expenses
                 </span>
-                <h1 className="font-playfair text-3xl font-bold text-white md:text-4xl">
+                <h1 className="font-playfair text-3xl font-bold text-[#7a6b6f] md:text-4xl">
                   Expense <em className="italic text-amber-400">Tracker</em>
                 </h1>
-                <p className="mt-2 text-md text-white/45">Track, split and understand your trip spending.</p>
+                <p className="mt-2 text-md text-[#7a6b6f]">Track, split and understand your trip spending.</p>
               </div>
-
-              {!loading && (
-                <div className="flex gap-6">
-                  {[
-                    { value: fmt(totalSpent), label: "Total Spent" },
-                    { value: expenses.length, label: "Expenses" },
-                    { value: topCategory, label: "Top Category" },
-                  ].map((s) => (
-                    <div key={s.label} className="text-center">
-                      <div className="font-playfair text-xl font-bold text-amber-400">{s.value}</div>
-                      <div className="text-[10px] uppercase tracking-wider text-white/40">{s.label}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+          
           </div>
         </div>
 
-        {/* ── Main ──────────────────────────────────────────────────── */}
         <div className="mx-auto max-w-6xl px-5 py-8 pb-20">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
 
-            {/* ── LEFT: Form ────────────────────────────────────────── */}
             <div className="lg:col-span-1">
               <div className="fade-up sticky top-6 rounded-2xl border border-[#E7DDD0] bg-[#FFFCF9] p-6 shadow-[0_2px_12px_rgba(28,25,23,0.06)]">
                 <h2 className="font-playfair mb-5 text-lg font-bold text-[#1C1917]">
                   {editingId ? " Edit Expense" : " Add Expense"}
                 </h2>
 
-                {/* Title */}
                 <div className="mb-4">
                   <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-widest text-stone-400">Description</label>
                   <div className="flex h-11 items-center gap-2 rounded-xl border-[1.5px] border-[#E7DDD0] bg-white px-3.5 transition-all focus-within:border-amber-500 focus-within:shadow-[0_0_0_3px_rgba(217,119,6,0.1)]">
@@ -444,9 +415,9 @@ export default function ExpenseTracker({ tripId = null }) {
               {/* Tab bar */}
               <div className="fade-up delay-1 mb-5 flex items-center gap-1 rounded-2xl border border-[#E7DDD0] bg-[#FFFCF9] p-1.5 shadow-[0_2px_8px_rgba(28,25,23,0.05)]">
                 {[
-                  { id: "list", label: "💳 Expenses" },
-                  { id: "charts", label: "📊 Analytics" },
-                  { id: "split", label: "🤝 Split" },
+                  { id: "list", label: "Expenses" },
+                  { id: "charts", label: "Analytics" },
+                  { id: "split", label: "Split" },
                 ].map((t) => (
                   <button key={t.id} onClick={() => setActiveTab(t.id)}
                     className={`flex-1 cursor-pointer rounded-xl py-2.5 text-md font-semibold transition-all ${activeTab === t.id
@@ -478,16 +449,11 @@ export default function ExpenseTracker({ tripId = null }) {
                       {pagination.total} expense{pagination.total !== 1 ? "s" : ""}
                     </span>
                   </div>
-
                   <div className="space-y-3">
                     {loading ? (
                       Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)
                     ) : expenses.length === 0 ? (
                       <div className="flex flex-col items-center py-16 text-center">
-                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full text-2xl"
-                          style={{ background: "rgba(217,119,6,0.08)", border: "1.5px dashed rgba(217,119,6,0.3)" }}>
-                          💸
-                        </div>
                         <h3 className="font-playfair text-lg font-bold text-[#1C1917]">No expenses yet</h3>
                         <p className="mt-1 text-md text-stone-400">Add your first expense using the form.</p>
                       </div>
@@ -504,15 +470,15 @@ export default function ExpenseTracker({ tripId = null }) {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2">
                                 <p className="truncate text-md font-semibold text-[#1C1917]">{exp.title}</p>
-                                <p className="shrink-0 font-playfair text-base font-bold text-amber-600">{fmt(exp.amount)}</p>
+                                <p className="shrink-0 font-playfair text-lg font-bold text-amber-600">{fmt(exp.amount)}</p>
                               </div>
-                              <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-stone-400">
+                              <div className="mt-1 flex flex-wrap items-center gap-2 text-[14px] text-stone-400">
                                 <span className={`rounded-full border px-2 py-0.5 font-medium capitalize ${m.bg} ${m.text} ${m.border}`}>
                                   {exp.category}
                                 </span>
                                 {exp.paidBy?.name && <span> {exp.paidBy.name}</span>}
-                                {exp.date && <span>📅 {exp.date.slice(0, 10)}</span>}
-                                {exp.splitType && <span className="capitalize">⚖️ {exp.splitType} split</span>}
+                                {exp.date && <span> {exp.date.slice(0, 10)}</span>}
+                                {exp.splitType && <span className="capitalize"> {exp.splitType} split</span>}
                               </div>
                             </div>
                             <div className="flex shrink-0 gap-1.5">
@@ -522,7 +488,8 @@ export default function ExpenseTracker({ tripId = null }) {
                               </button>
                               <button onClick={() => handleDelete(exp._id)}
                                 className="cursor-pointer rounded-lg border border-[#E7DDD0] bg-white px-2.5 py-1.5 text-sm text-stone-400 transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-500">
-                                🗑️
+                               
+                                <svg width="34" height="34" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M667.8 362.1H304V830c0 28.2 23 51 51.3 51h312.4c28.4 0 51.4-22.8 51.4-51V362.2h-51.3z" fill="#CCCCCC" /><path d="M750.3 295.2c0-8.9-7.6-16.1-17-16.1H289.9c-9.4 0-17 7.2-17 16.1v50.9c0 8.9 7.6 16.1 17 16.1h443.4c9.4 0 17-7.2 17-16.1v-50.9z" fill="#CCCCCC" /><path d="M733.3 258.3H626.6V196c0-11.5-9.3-20.8-20.8-20.8H419.1c-11.5 0-20.8 9.3-20.8 20.8v62.3H289.9c-20.8 0-37.7 16.5-37.7 36.8V346c0 18.1 13.5 33.1 31.1 36.2V830c0 39.6 32.3 71.8 72.1 71.8h312.4c39.8 0 72.1-32.2 72.1-71.8V382.2c17.7-3.1 31.1-18.1 31.1-36.2v-50.9c0.1-20.2-16.9-36.8-37.7-36.8z m-293.5-41.5h145.3v41.5H439.8v-41.5z m-146.2 83.1H729.5v41.5H293.6v-41.5z m404.8 530.2c0 16.7-13.7 30.3-30.6 30.3H355.4c-16.9 0-30.6-13.6-30.6-30.3V382.9h373.6v447.2z" fill="#211F1E" /><path d="M511.6 798.9c11.5 0 20.8-9.3 20.8-20.8V466.8c0-11.5-9.3-20.8-20.8-20.8s-20.8 9.3-20.8 20.8v311.4c0 11.4 9.3 20.7 20.8 20.7zM407.8 798.9c11.5 0 20.8-9.3 20.8-20.8V466.8c0-11.5-9.3-20.8-20.8-20.8s-20.8 9.3-20.8 20.8v311.4c0.1 11.4 9.4 20.7 20.8 20.7zM615.4 799.6c11.5 0 20.8-9.3 20.8-20.8V467.4c0-11.5-9.3-20.8-20.8-20.8s-20.8 9.3-20.8 20.8v311.4c0 11.5 9.3 20.8 20.8 20.8z" fill="#211F1E" /></svg>
                               </button>
                             </div>
                           </div>
@@ -566,7 +533,7 @@ export default function ExpenseTracker({ tripId = null }) {
                       <ResponsiveContainer width="100%" height={220}>
                         <BarChart data={categoryData} barCategoryGap="30%">
                           <CartesianGrid strokeDasharray="3 3" stroke="#E7DDD0" vertical={false} />
-                          <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#78716C" }} axisLine={false} tickLine={false} />
+                          <XAxis dataKey="name" tick={{ fontSize: 15, fill: "#78716C" }} axisLine={false} tickLine={false} />
                           <YAxis tick={{ fontSize: 11, fill: "#78716C" }} axisLine={false} tickLine={false}
                             tickFormatter={(v) => `₹${v}`} />
                           <Tooltip content={<BarTooltip />} />
@@ -592,7 +559,7 @@ export default function ExpenseTracker({ tripId = null }) {
                 </div>
               )}
 
-              {activeTab === "split" && <SplitTab tripId={tripId} />}              
+              {activeTab === "split" && <SplitTab tripId={tripId} />}
 
             </div>
           </div>

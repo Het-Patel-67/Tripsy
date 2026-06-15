@@ -79,7 +79,7 @@ export default function ExpenseChart({ data = [], total = 0 }) {
               />
 
               <div className="flex flex-col">
-                <span className="text-sm font-semibold capitalize text-[#1C1917]">
+                <span className="text-lg font-semibold capitalize text-[#1C1917]">
                   {entry.name}
                 </span>
 

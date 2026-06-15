@@ -216,7 +216,7 @@ export default function SplitTab({ tripId }) {
                     ? "border-emerald-300 bg-emerald-50 text-emerald-700"
                     : "border-[#E7DDD0] bg-white text-stone-500 hover:bg-stone-50"
                 }`}>
-                {copied ? "✓ Copied!" : " Copy summary"}
+                {copied ? "Copied!" : " Copy summary"}
               </button>
             )}
           </div>
