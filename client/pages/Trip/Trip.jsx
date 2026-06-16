@@ -350,14 +350,18 @@ function Trip() {
 
         {/* ── Hero banner ── */}
         <div
-          className="relative object-cover h-[60vh] overflow-hidden"
-         >
-          <img src="/assets/places/hero-2.png" alt="Hero" className="absolute inset-0 w-full h-[60vh] object-fill" />
-          <div className="relative z-10 max-w-2xl pt-25 pl-8">
-            
+          className="hero-glow relative overflow-hidden px-8 pt-18 pb-12"
+          style={{ background: "linear-gradient(135deg, #1C1917 0%, #292524 60%, #1C3557 100%)" }}
+        >
+          <div className="pointer-events-none absolute -right-10 -top-10 h-80 w-80 rounded-full border border-white/5" />
+          <div className="pointer-events-none absolute right-10 top-10 h-52 w-52 rounded-full border border-amber-500/10" />
+          <div className="relative z-10 max-w-2xl">
+            <span className="mb-4 inline-block rounded-full border border-amber-400/35 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-400">
+              Trip Planner
+            </span>
             <h1 className="font-playfair mb-3 text-4xl font-bold leading-tight text-white md:text-5xl">
               Plan Your{" "}
-              <em className="italic text-white">Perfect</em>
+              <em className="italic text-amber-400">Perfect</em>
               <br />
               Journey
             </h1>
@@ -368,7 +372,7 @@ function Trip() {
         </div>
 
         {/* ── Form card ── */}
-        <div className="mx-auto max-w-6xl mt-10 px-5 py-5 border-[#E7DDD0] rounded-2xl bg-[#FFFCF9]">
+        <div className="mx-auto max-w-6xl mt-10 px-5 md:py-5 border-[#E7DDD0] rounded-2xl bg-[#FFFCF9]">
           <div className="rounded-2xl border border-[#E7DDD0] bg-[#FFFCF9] p-8 shadow-[0_4px_24px_rgba(28,25,23,0.07)]">
 
             {prefillCity && (

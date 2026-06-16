@@ -106,7 +106,7 @@ export default function Auth() {
         setIsOpen(true);
       }
     } catch (err) {
-      setError("Please check your inputs and try again.");
+      setError(err.response?.data?.message || "An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
