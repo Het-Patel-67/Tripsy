@@ -270,7 +270,7 @@ function Trip() {
       setLoadingItinerary(false);
       setPopMsg({
         title: "Error",
-        body: "Please Enter Correct City/State of India",
+        body: err.message ,
       });
       setIsOpen(true);
     }

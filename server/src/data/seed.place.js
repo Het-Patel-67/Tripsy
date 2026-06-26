@@ -23,7 +23,7 @@ async function upsertCityDoc(cityName, stateName, transformedPlaces) {
   );
 
   if (!withCoords) {
-    console.warn(`⚠️  No coordinates to create city doc for ${cityName}`);
+    console.warn(` No coordinates to create city doc for ${cityName}`);
     return null;
   }
 
@@ -37,7 +37,7 @@ async function upsertCityDoc(cityName, stateName, transformedPlaces) {
     isTouristCity: true,
   });
 
-  console.log(`🏙️  Created new city doc: ${cityName} (${stateName})`);
+  console.log(`Created new city doc: ${cityName} (${stateName})`);
   return cityDoc;
 }
 
@@ -56,7 +56,7 @@ async function upsertCityDoc(cityName, stateName, transformedPlaces) {
  * @returns {Promise<{ inserted: number, cityDocs: Document[] }>}
  */
 export async function seedPlacesForInput(input) {
-  console.log(`\n📍 Processing: ${input}`);
+  console.log(`\n Processing: ${input}`);
 
   // ── 1. Check if input matches a state in City DB ──────────────────────────
   const stateMatches = await City.find({
@@ -74,25 +74,25 @@ export async function seedPlacesForInput(input) {
   }
 
   // ── 2. Fetch fresh data from SERP API ─────────────────────────────────────
-  console.log(`🧠 Fetching from SERP API: ${input}`);
+  console.log(`Fetching from SERP API: ${input}`);
 
   const [attractionsRaw, hotelsRaw] = await Promise.all([
     fetchAttractions(input),
     fetchHotels(input),
-    
-  ]);
 
+  ]);
+ 
   // ── 3. Transform raw SERP results ─────────────────────────────────────────
   const touristPlaces = transformPlaces(attractionsRaw, cityDocs, "tourist");
-  const hotels        = transformPlaces(hotelsRaw,       cityDocs, "hotel");
- 
+  const hotels = transformPlaces(hotelsRaw, cityDocs, "hotel");
 
-  const allTransformed = [...touristPlaces, ...hotels].filter(
-    (p) => p?.location?.coordinates?.length === 2
-  );
+  const allTransformed = [...touristPlaces, ...hotels];
+  
 
+  const withCoords = allTransformed.filter(p => p?.location?.coordinates?.length === 2);
+  
   if (!allTransformed.length) {
-    console.log(`⚠️  No valid data from SERP API for: ${input}`);
+    console.log(`No valid data from SERP API for: ${input}`);
     return { inserted: 0, cityDocs };
   }
 
@@ -117,8 +117,8 @@ export async function seedPlacesForInput(input) {
 
   // ── 5. Upsert City docs for any city not yet in DB ────────────────────────
   if (!cityDocs.length) {
-    const sample        = allTransformed[0];
-    const inferredCity  = sample.cityName  || input;
+    const sample = allTransformed[0];
+    const inferredCity = sample.cityName || input;
     const inferredState = sample.stateName || (isStateInput ? input : "");
 
     const newCityDoc = await upsertCityDoc(
@@ -130,14 +130,14 @@ export async function seedPlacesForInput(input) {
     if (newCityDoc) {
       cityDocs = [newCityDoc];
       allTransformed.forEach((p) => {
-        if (!p.city)      p.city      = newCityDoc._id;
-        if (!p.cityName)  p.cityName  = newCityDoc.name;
+        if (!p.city) p.city = newCityDoc._id;
+        if (!p.cityName) p.cityName = newCityDoc.name;
         if (!p.stateName) p.stateName = newCityDoc.state;
       });
     }
   }
 
-  // ── 6. Delete stale data, insert fresh ───────────────────────────────────
+
   const cityNames = [...new Set(allTransformed.map((p) => p.cityName).filter(Boolean))];
 
   if (cityNames.length) {

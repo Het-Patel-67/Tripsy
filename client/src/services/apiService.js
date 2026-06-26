@@ -1,9 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
-    // withCredentials no longer needed — auth is handled via Bearer token,
-    // not cross-site cookies. Removing it avoids CORS preflight complications.
+    baseURL: import.meta.env.VITE_LOCAL_API_URL || import.meta.env.VITE_API_URL ,
 });
 
 // Attach the JWT from localStorage to every outgoing request automatically.

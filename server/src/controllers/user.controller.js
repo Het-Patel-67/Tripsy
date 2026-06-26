@@ -4,18 +4,33 @@ import User from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import validator from "validator";
 
-const generateAccessToken = async (userId) => {
+const generateAccessAndRefreshTokens = async (userId) => {
+   
+    const user = await User.findById(userId);
+
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+    user.refreshToken = refreshToken;
     try {
-        const user = await User.findById(userId);
-        const accessToken = user.generateAccessToken();
-        return { accessToken };
-    } catch (error) {
-        throw new ApiError(500, "Something went wrong generating token");
+        await user.save({ validateBeforeSave: false });
+        
+    } catch (err) {
+        console.error("Save failed - Full error:", {
+            message: err.message,
+            name: err.name,
+            stack: err.stack,
+            code: err.code
+        });
     }
+    const check = await User.findById(userId).select("refreshToken");
+   
+    return { accessToken, refreshToken };
 };
 
 const registerUser = asyncHandler(async (req, res) => {
+
     const { username, password, email, mobile } = req.body;
+
     if (!email || !validator.isEmail(email)) {
         return res.status(400).json({
             message: "Please provide a valid email address.",
@@ -60,6 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
+   
     const { email, username, password } = req.body;
 
     if (!(email || username)) {
@@ -70,14 +86,14 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(404, "User doesn't exist");
     }
-
+    
     const isPasswordValid = await user.isPasswordMatch(password);
     if (!isPasswordValid) {
         throw new ApiError(401, "Invalid Password");
     }
-
-    const { accessToken } = await generateAccessToken(user._id);
-
+   
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+    
     const loggedInUser = await User.findById(user._id).select(
         "-password -refreshToken"
     );
@@ -85,7 +101,7 @@ const loginUser = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(
             200,
-            { user: loggedInUser, accessToken },
+            { user: loggedInUser, accessToken, refreshToken },
             "User logged in successfully"
         )
     );
@@ -102,9 +118,12 @@ const getMe = asyncHandler(async (req, res) => {
 // Stateless logout — client simply discards the token from localStorage.
 // No server-side action needed, but endpoint kept for consistency.
 const logoutUser = asyncHandler(async (req, res) => {
-    return res
-        .status(200)
-        .json(new ApiResponse(200, {}, "Logged out successfully"));
+    await User.findByIdAndUpdate(
+        req.user._id,
+        { $unset: { refreshToken: 1 } },
+        { new: true }
+    );
+    return res.status(200).json(new ApiResponse(200, {}, "Logged out successfully"));
 });
 
 export { registerUser, loginUser, getMe, logoutUser };

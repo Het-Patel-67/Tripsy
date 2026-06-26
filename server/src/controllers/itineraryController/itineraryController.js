@@ -15,46 +15,46 @@ const MAX_PLACES_PER_DAY = 4;
 const CACHE_TTL_DAYS = 30;
 
 const categoryMapper = {
-  Tourist:     ["tourist", "tourist_attraction", "point_of_interest"],
-  Nature:      ["nature", "park", "garden", "lake", "waterfall", "national_park"],
-  Adventure:   ["adventure", "campground", "hiking_area", "amusement_park"],
-  Historical:  ["historical", "fort", "museum", "historical_landmark", "monument"],
-  Spiritual:   ["spiritual", "hindu_temple", "mosque", "church", "jain_temple", "synagogue"],
-  Culture:     ["culture", "art_gallery", "museum"],
-  Wildlife:    ["wildlife", "zoo", "national_park", "safari"],
-  Beach:       ["beach"],
-  Mountain:    ["mountain", "hill_station"],
+  Tourist: ["tourist", "tourist_attraction", "point_of_interest"],
+  Nature: ["nature", "park", "garden", "lake", "waterfall", "national_park"],
+  Adventure: ["adventure", "campground", "hiking_area", "amusement_park"],
+  Historical: ["historical", "fort", "museum", "historical_landmark", "monument"],
+  Spiritual: ["spiritual", "hindu_temple", "mosque", "church", "jain_temple", "synagogue"],
+  Culture: ["culture", "art_gallery", "museum"],
+  Wildlife: ["wildlife", "zoo", "national_park", "safari"],
+  Beach: ["beach"],
+  Mountain: ["mountain", "hill_station"],
   Entertainment: ["entertainment", "movie_theater", "amusement_park"],
-  Shopping:    ["shopping_mall", "market"],
+  Shopping: ["shopping_mall", "market"],
 };
 
 function getDistance(coord1, coord2) {
   const [lng1, lat1] = coord1;
   const [lng2, lat2] = coord2;
-  const R    = 6371;
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLng = ((lng2 - lng1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLng / 2) ** 2;
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function buildRoute(places, startLocation) {
   let unvisited = [...places];
-  let route     = [];
-  let current   = startLocation;
+  let route = [];
+  let current = startLocation;
 
   while (unvisited.length) {
     let nearestIndex = 0;
-    let minDistance  = Infinity;
+    let minDistance = Infinity;
 
     for (let i = 0; i < unvisited.length; i++) {
       const dist = getDistance(current, unvisited[i].location.coordinates);
       if (dist < minDistance) {
-        minDistance  = dist;
+        minDistance = dist;
         nearestIndex = i;
       }
     }
@@ -68,7 +68,7 @@ function buildRoute(places, startLocation) {
 }
 
 function divideIntoDays(route, days, startDate) {
-  const itinerary  = [];
+  const itinerary = [];
   const MIN_PER_DAY = 2;
   let index = 0;
 
@@ -77,7 +77,7 @@ function divideIntoDays(route, days, startDate) {
     date.setDate(date.getDate() + i);
 
     const remainingPlaces = route.length - index;
-    const remainingDays   = days - i;
+    const remainingDays = days - i;
 
     let placesToday = Math.ceil(remainingPlaces / remainingDays);
     placesToday = Math.max(MIN_PER_DAY, Math.min(MAX_PLACES_PER_DAY, placesToday));
@@ -87,8 +87,8 @@ function divideIntoDays(route, days, startDate) {
     }
 
     itinerary.push({
-      day:    i + 1,
-      date:   date.toISOString().split("T")[0],
+      day: i + 1,
+      date: date.toISOString().split("T")[0],
       places: route.slice(index, index + placesToday),
     });
 
@@ -107,24 +107,24 @@ function addTimeSlots(plan) {
   };
 
   return plan.map((day) => ({
-    day:  day.day,
+    day: day.day,
     date: day.date,
     places: day.places.map((p, i) => {
       const dist = distributions[day.places.length] || distributions[4];
       return {
-        placeId:     p._id,
-        name:        p.name,
-        category:    p.category     || "",
-        image:       getBestPlaceImage(p),
-        images:      p.images       || [],
-        description: p.description  || "",
-        types:       p.types        || [],
-        user_review: p.user_review  || "",
-        rating:      p.rating       || 0,
-        location:    p.location,
-        cityName:    p.cityName     || "",
-        stateName:   p.stateName    || "",
-        time:        dist[i]        || "Evening",
+        placeId: p._id,
+        name: p.name,
+        category: p.category || "",
+        image: getBestPlaceImage(p),
+        images: p.images || [],
+        description: p.description || "",
+        types: p.types || [],
+        user_review: p.user_review || "",
+        rating: p.rating || 0,
+        location: p.location,
+        cityName: p.cityName || "",
+        stateName: p.stateName || "",
+        time: dist[i] || "Evening",
       };
     }),
   }));
@@ -146,23 +146,25 @@ function addTimeSlots(plan) {
  * within CACHE_TTL_DAYS. Hotels and restaurants are excluded because
  * they are supplementary and fetched separately.
  */
-async function hasFreshCachedPlaces(input, daysNeeded) {
+async function hasFreshCachedPlaces(input, daysNeeded, mappedPreferences = []) {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - CACHE_TTL_DAYS);
-
   const nameRegex = new RegExp(input.trim(), "i");
 
-  const count = await Place.countDocuments({
-    $or: [
-      { cityName:  nameRegex },
-      { stateName: nameRegex },
-    ],
-    category:  { $nin: ["hotel", "restaurant"] },
+  const query = {
+    $or: [{ cityName: nameRegex }, { stateName: nameRegex }],
+    category: { $nin: ["hotel", "restaurant"] },
     fetchedAt: { $gte: cutoff },
-  });
+    ...(mappedPreferences.length && {
+      $or: [
+        { category: { $in: mappedPreferences } },
+        { types: { $in: mappedPreferences } },
+      ],
+    }),
+  };
 
-  console.log(`🔍 Cache check for "${input}": ${count} places found (need ${daysNeeded * 2})`);
-
+  const count = await Place.countDocuments(query);
+  console.log(`Cache check for "${input}": ${count} places (need ${daysNeeded * 2})`);
   return count >= daysNeeded * 2;
 }
 
@@ -174,7 +176,9 @@ export const generateItinerary = asyncHandler(async (req, res) => {
   }
 
   const totalPlacesNeeded = Number(days) * MAX_PLACES_PER_DAY;
-
+  let mappedPreferences = preferences.flatMap(
+    (pref) => categoryMapper[pref] || []
+  ).map((p) => p.toLowerCase());
   const cached = await hasFreshCachedPlaces(city, Number(days));
 
   if (!cached) {
@@ -189,22 +193,38 @@ export const generateItinerary = asyncHandler(async (req, res) => {
     console.log(`✅ Cache hit for "${city}" — using DB data`);
   }
 
-  const cityDocs = await City.find({
-    $or: [
-      { name:  { $regex: city, $options: "i" } },
-      { state: { $regex: city, $options: "i" } },
-    ],
+  let cityDocs = await City.find({
+  $or: [
+    { name:  { $regex: city, $options: "i" } },
+    { state: { $regex: city, $options: "i" } },
+  ],
+});
+
+// City not in DB even after seeding — create it from seeded places
+if (!cityDocs.length) {
+  const samplePlace = await Place.findOne({
+    $or: [{ cityName: new RegExp(city, "i") }, { stateName: new RegExp(city, "i") }],
+    "location.coordinates": { $exists: true },
   });
 
-  if (!cityDocs.length) {
-    return res.status(404).json({ message: "City not found even after fetch" });
+  if (samplePlace?.location?.coordinates) {
+    const newCity = await City.create({
+      name: samplePlace.cityName || city,
+      state: samplePlace.stateName || "",
+      location: {
+        type: "Point",
+        coordinates: samplePlace.location.coordinates,
+      },
+      isTouristCity: true,
+    });
+    cityDocs = [newCity];
+   
+  } else {
+    return res.status(404).json({ message: `No data found for "${city}". Try a nearby major city.` });
   }
+}
 
   const limitedCityDocs = cityDocs.slice(0, 5);
-
-  let mappedPreferences = preferences.flatMap(
-    (pref) => categoryMapper[pref] || []
-  ).map((p) => p.toLowerCase());
 
   let allPlaces = [];
 
@@ -214,16 +234,16 @@ export const generateItinerary = asyncHandler(async (req, res) => {
     const places = await Place.aggregate([
       {
         $geoNear: {
-          key:          "location",
-          near:         { type: "Point", coordinates: c.location.coordinates },
+          key: "location",
+          near: { type: "Point", coordinates: c.location.coordinates },
           distanceField: "distance",
-          spherical:    true,
+          spherical: true,
           query: {
             city: c._id,
             ...(mappedPreferences.length && {
               $or: [
                 { category: { $in: mappedPreferences } },
-                { types:    { $in: mappedPreferences } },
+                { types: { $in: mappedPreferences } },
               ],
             }),
           },
@@ -239,7 +259,7 @@ export const generateItinerary = asyncHandler(async (req, res) => {
           },
         },
       },
-      { $sort:  { score: -1 } },
+      { $sort: { score: -1 } },
       { $limit: Math.min(totalPlacesNeeded * 2, 20) },
     ]);
 
@@ -253,29 +273,29 @@ export const generateItinerary = asyncHandler(async (req, res) => {
 
   const processedPlaces = allPlaces.map((p) => {
 
-  // cloudinary image
-  const optimized = p.optimizedImage;
+    // cloudinary image
+    const optimized = p.optimizedImage;
 
-  // original serp image
-  const original =
-    Array.isArray(p.images) && p.images.length > 0
-      ? p.images[0]
-      : null;
+    // original serp image
+    const original =
+      Array.isArray(p.images) && p.images.length > 0
+        ? p.images[0]
+        : null;
 
-  return {
-    ...p,
+    return {
+      ...p,
 
-    
-    image:
-      optimized ||
-      original,
 
-   
-    images: p.images || [],
+      image:
+        optimized ||
+        original,
 
-    optimizedImage: optimized || null
-  };
-});
+
+      images: p.images || [],
+
+      optimizedImage: optimized || null
+    };
+  });
 
   setImmediate(() => processPlaceImagesInBackground(processedPlaces));
 
@@ -287,20 +307,20 @@ export const generateItinerary = asyncHandler(async (req, res) => {
     uniquePlaces.length >= days * 2 ? uniquePlaces : processedPlaces;
 
 
-  const startLocation  = cityDocs[0].location.coordinates;
-  const limitedPlaces  = usablePlaces.slice(0, totalPlacesNeeded);
-  const route          = buildRoute(limitedPlaces, startLocation);
-  const divided        = divideIntoDays(route, Number(days), startDate);
-  const finalPlan      = addTimeSlots(divided);
+  const startLocation = cityDocs[0].location.coordinates;
+  const limitedPlaces = usablePlaces.slice(0, totalPlacesNeeded);
+  const route = buildRoute(limitedPlaces, startLocation);
+  const divided = divideIntoDays(route, Number(days), startDate);
+  const finalPlan = addTimeSlots(divided);
 
   return res.status(200).json({
-    success:     true,
-    city:        limitedCityDocs[0].name,
-    cityName:    limitedCityDocs[0].name,
-    stateName:   limitedCityDocs[0].state,
+    success: true,
+    city: limitedCityDocs[0].name,
+    cityName: limitedCityDocs[0].name,
+    stateName: limitedCityDocs[0].state,
     totalPlaces: usablePlaces.length,
     days,
     startDate,
-    itinerary:   finalPlan,
+    itinerary: finalPlan,
   });
 });
