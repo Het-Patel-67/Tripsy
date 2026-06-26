@@ -17,10 +17,10 @@ const CACHE_TTL_DAYS = 30;
 const categoryMapper = {
   Tourist: ["tourist", "tourist_attraction"],
   Nature: ["nature", "park", "garden", "lake", "waterfall"],
-  Adventure: ["adventure", "campground", "hiking_area"],
+  Adventure: ["adventure" ,"hiking_area"],
   Historical: ["historical", "fort", "museum", "historical_landmark"],
   Spiritual: ["spiritual", "hindu_temple"],
-  Culture: ["culture", "art_gallery", "museum"],
+  Culture: ["culture","museum"],
   Wildlife: ["wildlife", "zoo", "national_park"],
   Beach: ["beach"],
   Mountain: ["mountain"],
