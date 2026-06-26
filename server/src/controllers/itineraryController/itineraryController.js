@@ -15,17 +15,17 @@ const MAX_PLACES_PER_DAY = 4;
 const CACHE_TTL_DAYS = 30;
 
 const categoryMapper = {
-  Tourist: ["tourist", "tourist_attraction", "point_of_interest"],
-  Nature: ["nature", "park", "garden", "lake", "waterfall", "national_park"],
-  Adventure: ["adventure", "campground", "hiking_area", "amusement_park"],
-  Historical: ["historical", "fort", "museum", "historical_landmark", "monument"],
-  Spiritual: ["spiritual", "hindu_temple", "mosque", "church", "jain_temple", "synagogue"],
+  Tourist: ["tourist", "tourist_attraction"],
+  Nature: ["nature", "park", "garden", "lake", "waterfall"],
+  Adventure: ["adventure", "campground", "hiking_area"],
+  Historical: ["historical", "fort", "museum", "historical_landmark"],
+  Spiritual: ["spiritual", "hindu_temple"],
   Culture: ["culture", "art_gallery", "museum"],
-  Wildlife: ["wildlife", "zoo", "national_park", "safari"],
+  Wildlife: ["wildlife", "zoo", "national_park"],
   Beach: ["beach"],
-  Mountain: ["mountain", "hill_station"],
-  Entertainment: ["entertainment", "movie_theater", "amusement_park"],
-  Shopping: ["shopping_mall", "market"],
+  Mountain: ["mountain"],
+  Entertainment: ["entertainment","amusement_park"],
+  Shopping: [ "market"],
 };
 
 function getDistance(coord1, coord2) {
