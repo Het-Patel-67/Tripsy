@@ -17,15 +17,15 @@ const CACHE_TTL_DAYS = 30;
 const categoryMapper = {
   Tourist: ["tourist", "tourist_attraction"],
   Nature: ["nature", "park", "garden", "lake", "waterfall"],
-  Adventure: ["adventure" ,"hiking_area"],
+  Adventure: ["adventure", "hiking_area"],
   Historical: ["historical", "fort", "museum", "historical_landmark"],
   Spiritual: ["spiritual", "hindu_temple"],
-  Culture: ["culture","museum"],
+  Culture: ["culture", "museum"],
   Wildlife: ["wildlife", "zoo", "national_park"],
   Beach: ["beach"],
   Mountain: ["mountain"],
-  Entertainment: ["entertainment","amusement_park"],
-  Shopping: [ "market"],
+  Entertainment: ["entertainment", "amusement_park"],
+  Shopping: ["market"],
 };
 
 function getDistance(coord1, coord2) {
@@ -194,35 +194,35 @@ export const generateItinerary = asyncHandler(async (req, res) => {
   }
 
   let cityDocs = await City.find({
-  $or: [
-    { name:  { $regex: city, $options: "i" } },
-    { state: { $regex: city, $options: "i" } },
-  ],
-});
-
-// City not in DB even after seeding — create it from seeded places
-if (!cityDocs.length) {
-  const samplePlace = await Place.findOne({
-    $or: [{ cityName: new RegExp(city, "i") }, { stateName: new RegExp(city, "i") }],
-    "location.coordinates": { $exists: true },
+    $or: [
+      { name: { $regex: city, $options: "i" } },
+      { state: { $regex: city, $options: "i" } },
+    ],
   });
 
-  if (samplePlace?.location?.coordinates) {
-    const newCity = await City.create({
-      name: samplePlace.cityName || city,
-      state: samplePlace.stateName || "",
-      location: {
-        type: "Point",
-        coordinates: samplePlace.location.coordinates,
-      },
-      isTouristCity: true,
+  // City not in DB even after seeding — create it from seeded places
+  if (!cityDocs.length) {
+    const samplePlace = await Place.findOne({
+      $or: [{ cityName: new RegExp(city, "i") }, { stateName: new RegExp(city, "i") }],
+      "location.coordinates": { $exists: true },
     });
-    cityDocs = [newCity];
-   
-  } else {
-    return res.status(404).json({ message: `No data found for "${city}". Try a nearby major city.` });
+
+    if (samplePlace?.location?.coordinates) {
+      const newCity = await City.create({
+        name: samplePlace.cityName || city,
+        state: samplePlace.stateName || "",
+        location: {
+          type: "Point",
+          coordinates: samplePlace.location.coordinates,
+        },
+        isTouristCity: true,
+      });
+      cityDocs = [newCity];
+
+    } else {
+      return res.status(404).json({ message: `No data found for "${city}". Try a nearby major city.` });
+    }
   }
-}
 
   const limitedCityDocs = cityDocs.slice(0, 5);
 
@@ -239,13 +239,23 @@ if (!cityDocs.length) {
           distanceField: "distance",
           spherical: true,
           query: {
-            city: c._id,
-            ...(mappedPreferences.length && {
-              $or: [
-                { category: { $in: mappedPreferences } },
-                { types: { $in: mappedPreferences } },
-              ],
-            }),
+            $and: [
+              
+              {
+                $or: [
+                  { cityName: { $regex: c.name, $options: "i" } },
+                  { stateName: { $regex: c.state || city, $options: "i" } },
+                  { cityName: { $regex: city, $options: "i" } },
+                ],
+              },
+              
+              ...(mappedPreferences.length ? [{
+                $or: [
+                  { category: { $in: mappedPreferences } },
+                  { types: { $in: mappedPreferences } },
+                ],
+              }] : []),
+            ],
           },
         },
       },
@@ -265,11 +275,11 @@ if (!cityDocs.length) {
 
     allPlaces.push(...places);
   }
-
+  
+  
   if (!allPlaces.length) {
     return res.status(404).json({ message: "No places found for the given city" });
   }
-
 
   const processedPlaces = allPlaces.map((p) => {
 

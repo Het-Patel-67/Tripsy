@@ -38,7 +38,7 @@ export default function PageHeader({ totalTrips, totalDays, totalPlacesAll, load
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <span className="mb-3 inline-block rounded-full border border-amber-400/35 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-400">
-              ✦ My Trips
+               My Trips
             </span>
             <h1 className="font-playfair text-3xl font-bold text-white md:text-4xl">
               Saved <em className="italic text-amber-400">Itineraries</em>

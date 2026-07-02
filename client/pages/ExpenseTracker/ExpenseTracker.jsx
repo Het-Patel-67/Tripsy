@@ -253,29 +253,22 @@ export default function ExpenseTracker({ tripId = null }) {
       <div className="font-dm  min-h-screen bg-[#F5EFE6] text-[#1C1917]">
 
         <div
-          className="relative object-cover h-[60vh] overflow-hidden"
-         >
-          <img src="/assets/default/expense.png" alt="Hero" className="absolute inset-0 w-full h-[60vh] object-fill" />
-          <div className="pointer-events-none absolute inset-0"
-          />
-          <div className="pointer-events-none absolute -right-10 -top-10 h-72 w-72 rounded-full border border-white/5" />
-          <div className="pointer-events-none absolute right-12 top-12 h-44 w-44 rounded-full border border-amber-500/10" />
-
-          <div className="relative z-10 mx-auto max-w-6xl">
-            
-            
-              <div className="flex flex-col flex-wrap mt-25 px-4">
-                <span className="mb-3 rounded-full border border-amber-400/35 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-400 w-37.5">
-                  ✦ Trip Expenses
-                </span>
-                <h1 className="font-playfair text-3xl font-bold text-[#7a6b6f] md:text-4xl">
-                  Expense <em className="italic text-amber-400">Tracker</em>
-                </h1>
-                <p className="mt-2 text-md text-[#7a6b6f]">Track, split and understand your trip spending.</p>
-              </div>
-          
+          className="hero-glow relative overflow-hidden px-8 pt-18 pb-12"
+          style={{ background: "linear-gradient(135deg, #1C1917 0%, #292524 60%, #1C3557 100%)" }}
+        >
+          <div className="pointer-events-none absolute -right-10 -top-10 h-80 w-80 rounded-full border border-white/5" />
+          <div className="pointer-events-none absolute right-10 top-10 h-52 w-52 rounded-full border border-amber-500/10" />
+          <div className="flex flex-col flex-wrap mt-10 px-4">
+            <span className="mb-3 rounded-full border border-amber-400/35 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-400 w-37.5">
+              Trip Expenses
+            </span>
+            <h1 className="font-playfair text-3xl font-bold text-white md:text-4xl">
+              Expense <em className="italic text-amber-400">Tracker</em>
+            </h1>
+            <p className="mt-2 text-md text-[#7a6b6f]">Track, split and understand your trip spending.</p>
           </div>
         </div>
+
 
         <div className="mx-auto max-w-6xl px-5 py-8 pb-20">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -488,7 +481,7 @@ export default function ExpenseTracker({ tripId = null }) {
                               </button>
                               <button onClick={() => handleDelete(exp._id)}
                                 className="cursor-pointer rounded-lg border border-[#E7DDD0] bg-white px-2.5 py-1.5 text-sm text-stone-400 transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-500">
-                               
+
                                 <svg width="34" height="34" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M667.8 362.1H304V830c0 28.2 23 51 51.3 51h312.4c28.4 0 51.4-22.8 51.4-51V362.2h-51.3z" fill="#CCCCCC" /><path d="M750.3 295.2c0-8.9-7.6-16.1-17-16.1H289.9c-9.4 0-17 7.2-17 16.1v50.9c0 8.9 7.6 16.1 17 16.1h443.4c9.4 0 17-7.2 17-16.1v-50.9z" fill="#CCCCCC" /><path d="M733.3 258.3H626.6V196c0-11.5-9.3-20.8-20.8-20.8H419.1c-11.5 0-20.8 9.3-20.8 20.8v62.3H289.9c-20.8 0-37.7 16.5-37.7 36.8V346c0 18.1 13.5 33.1 31.1 36.2V830c0 39.6 32.3 71.8 72.1 71.8h312.4c39.8 0 72.1-32.2 72.1-71.8V382.2c17.7-3.1 31.1-18.1 31.1-36.2v-50.9c0.1-20.2-16.9-36.8-37.7-36.8z m-293.5-41.5h145.3v41.5H439.8v-41.5z m-146.2 83.1H729.5v41.5H293.6v-41.5z m404.8 530.2c0 16.7-13.7 30.3-30.6 30.3H355.4c-16.9 0-30.6-13.6-30.6-30.3V382.9h373.6v447.2z" fill="#211F1E" /><path d="M511.6 798.9c11.5 0 20.8-9.3 20.8-20.8V466.8c0-11.5-9.3-20.8-20.8-20.8s-20.8 9.3-20.8 20.8v311.4c0 11.4 9.3 20.7 20.8 20.7zM407.8 798.9c11.5 0 20.8-9.3 20.8-20.8V466.8c0-11.5-9.3-20.8-20.8-20.8s-20.8 9.3-20.8 20.8v311.4c0.1 11.4 9.4 20.7 20.8 20.7zM615.4 799.6c11.5 0 20.8-9.3 20.8-20.8V467.4c0-11.5-9.3-20.8-20.8-20.8s-20.8 9.3-20.8 20.8v311.4c0 11.5 9.3 20.8 20.8 20.8z" fill="#211F1E" /></svg>
                               </button>
                             </div>
